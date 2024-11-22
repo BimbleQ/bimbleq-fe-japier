@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import TagihanCard from "../components/TagihanCard";
-import HistoryPembayaranCard from "../components/HistoryPembayaranCard";
-import DropdownTagihan from "../components/DropdownTagihan"; // Mengimpor DropdownTagihan
+import TagihanCard from "../../components/TagihanCard";
+import HistoryPembayaranCard from "../../components/HistoryPembayaranCard";
+import DropdownTagihan from "../../components/DropdownTagihan"; // Mengimpor DropdownTagihan
 
 const PembayaranSiswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

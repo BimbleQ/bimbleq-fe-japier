@@ -1,9 +1,9 @@
 import React from "react";
-import RegulerScheduleCard from "../components/RegulerScheduleCard";
-import PrivateScheduleCard from "../components/PrivateScheduleCard";
-import TagihanCard from "../components/TagihanCard";
-import ClassRequestCard from "../components/ClassRequestCard";
-import AnnouncementCard from "../components/AnnouncementCard";
+import RegulerScheduleCard from "../../components/RegulerScheduleCard";
+import PrivateScheduleCard from "../../components/PrivateScheduleCard";
+import TagihanCard from "../../components/TagihanCard";
+import ClassRequestCard from "../../components/ClassRequestCard";
+import AnnouncementCard from "../../components/AnnouncementCard";
 
 const DashboardSiswa = () => {
   const announcements = [

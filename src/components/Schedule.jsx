@@ -1,5 +1,5 @@
 import React from "react";
-import ScheduleCard from "./components/ScheduleCard";
+import ScheduleCard from "./ScheduleCard";
 
 const Schedule = () => {
   return (

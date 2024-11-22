@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../components/Header";
-import Schedule from "../components/Schedule";
-import ClassList from "../components/ClassList";
+import Header from "../../components/Header";
+import Schedule from "../../components/Schedule";
+import ClassList from "../../components/ClassList";
 
 const DashboardGuru = () => {
   return (

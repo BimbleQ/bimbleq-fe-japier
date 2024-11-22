@@ -1,6 +1,6 @@
 import React from "react";
-import AktivitasTerbaru from "../components/AktivitasTerbaru";
-import Calendar from "../components/Calendar";
+import AktivitasTerbaru from "../../components/AktivitasTerbaru";
+import Calendar from "../../components/Calendar";
 
 const DashboardAdmin = () => {
   return (

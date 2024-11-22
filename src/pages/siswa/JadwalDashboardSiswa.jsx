@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ClassRequestCard from "../components/ClassRequestCard";
-import Calendar from "../components/Calendar";
-import DropdownPilihKelas from "../components/DropdownPilihKelas";
+import ClassRequestCard from "../../components/ClassRequestCard";
+import Calendar from "../../components/Calendar";
+import DropdownPilihKelas from "../../components/DropdownPilihKelas";
 
 const JadwalDashboardSiswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

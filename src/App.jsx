@@ -4,25 +4,25 @@ import SideNav from "./components/sideNav";
 
 // Admin Pages
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
-import KelolaKelas from "../pages/admin/KelolaKelas";
-import EditKelas from "../pages/admin/EditKelas";
-import KelolaPengajar from "../pages/admin/KelolaPengajar";
-import EditPengajar from "../pages/admin/EditPengajar";
-import KelolaSiswa from "../pages/admin/KelolaSiswa";
-import EditSiswa from "../pages/admin/EditSiswa";
-import KelolaPembayaran from "../pages/admin/KelolaPembayaran";
-import KelolaPelajaran from "../pages/admin/KelolaPelajaran";
+import KelolaKelas from "./pages/admin/KelolaKelas";
+import EditKelas from "./pages/admin/EditKelas";
+import KelolaPengajar from "./pages/admin/KelolaPengajar";
+import EditPengajar from "./pages/admin/EditPengajar";
+import KelolaSiswa from "./pages/admin/KelolaSiswa";
+import EditSiswa from "./pages/admin/EditSiswa";
+import KelolaPembayaran from "./pages/admin/KelolaPembayaran";
+import KelolaPelajaran from "./pages/admin/KelolaPelajaran";
 
 // Guru Pages
-import DashboardGuru from "../pages/guru/DashboardGuru";
-import JadwalKelas from "../pages/guru/JadwalKelas";
-import InputNilai from "../pages/guru/InputNilai";
-import InputPresensi from "../pages/guru/InputPresensi";
+import DashboardGuru from "./pages/guru/DashboardGuru";
+import JadwalKelas from "./pages/guru/JadwalKelas";
+import InputNilai from "./pages/guru/InputNilai";
+import InputPresensi from "./pages/guru/InputPresensi";
 
 // Siswa Pages
-import DashboardSiswa from "../pages/siswa/DashboardSiswa";
-import JadwalDashboardSiswa from "../pages/siswa/JadwalDashboardSiswa";
-import PembayaranSiswa from "../pages/siswa/PembayaranSiswa";
+import DashboardSiswa from "./pages/siswa/DashboardSiswa";
+import JadwalDashboardSiswa from "./pages/siswa/JadwalDashboardSiswa";
+import PembayaranSiswa from "./pages/siswa/PembayaranSiswa";
 
 import "./index.css";
 import "@fontsource/poppins"; // Menggunakan font Poppins

@@ -1,4 +1,4 @@
-import ClassCard from "./components/ClassCard";
+import ClassCard from "./ClassCard";
 
 const ClassList = () => {
   const classes = [
