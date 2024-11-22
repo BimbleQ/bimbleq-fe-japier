@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import SideNav from "./components/sideNav";
+import AuthService from "./services/AuthService"; // Import AuthService
 
 // Halaman Login
 import Login from "./pages/login/login";
@@ -31,53 +32,41 @@ import "./index.css";
 import "@fontsource/poppins"; // Menggunakan font Poppins
 
 const App = () => {
-  // Simulasi state untuk login
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simulasi login
-  const [role, setRole] = useState(null); // Simulasi role (admin, guru, siswa)
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Status login
+  const [role, setRole] = useState(null); // Role pengguna (admin, guru, siswa)
+  const [isLoading, setIsLoading] = useState(true); // State untuk loading
 
-  // Fungsi login simulasi
-  const handleLogin = (userRole) => {
-    setRole(userRole);
-    setIsLoggedIn(true);
+  // Validasi session saat aplikasi dimuat
+  useEffect(() => {
+    const validateSession = async () => {
+      try {
+        const sessionData = await AuthService.validateSession();
+        setIsLoggedIn(true);
+        setRole(sessionData.role); // Simpan role dari respons API
+      } catch (error) {
+        console.log("Session tidak valid:", error.message);
+        setIsLoggedIn(false);
+        setRole(null); // Reset role jika session tidak valid
+      } finally {
+        setIsLoading(false); // Set loading selesai
+      }
+    };
+
+    validateSession();
+  }, []);
+
+  // Redirect ke dashboard sesuai role
+  const getDefaultRoute = () => {
+    if (role === "admin") return <Navigate to="/admin" />;
+    if (role === "guru") return <Navigate to="/guru" />;
+    if (role === "siswa") return <Navigate to="/siswa" />;
+    return null;
   };
 
-  // Render routes berdasarkan role
-  const renderRoutes = () => {
-    if (role === "admin") {
-      return (
-        <Routes>
-          <Route path="/" element={<DashboardAdmin />} />
-          <Route path="/kelola-kelas" element={<KelolaKelas />} />
-          <Route path="/kelola-kelas/edit/:id" element={<EditKelas />} />
-          <Route path="/kelola-pengajar" element={<KelolaPengajar />} />
-          <Route path="/kelola-pengajar/edit/:id" element={<EditPengajar />} />
-          <Route path="/kelola-siswa" element={<KelolaSiswa />} />
-          <Route path="/kelola-siswa/edit/:id" element={<EditSiswa />} />
-          <Route path="/kelola-pembayaran" element={<KelolaPembayaran />} />
-          <Route path="/kelola-pelajaran" element={<KelolaPelajaran />} />
-        </Routes>
-      );
-    } else if (role === "guru") {
-      return (
-        <Routes>
-          <Route path="/" element={<DashboardGuru />} />
-          <Route path="/jadwal-kelas" element={<JadwalKelas />} />
-          <Route path="/input-nilai" element={<InputNilai />} />
-          <Route path="/input-presensi" element={<InputPresensi />} />
-        </Routes>
-      );
-    } else if (role === "siswa") {
-      return (
-        <Routes>
-          <Route path="/" element={<DashboardSiswa />} />
-          <Route path="/jadwal-kelas" element={<JadwalDashboardSiswa />} />
-          <Route path="/pembayaran" element={<PembayaranSiswa />} />
-        </Routes>
-      );
-    } else {
-      return <Navigate to="/" />;
-    }
-  };
+  // Tampilkan loading jika masih memvalidasi session
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
 
   return (
     <Router>
@@ -87,16 +76,55 @@ const App = () => {
           <SideNav role={role} />
 
           {/* Konten */}
-          <div className="flex-1 bg-gray-100 overflow-y-auto p-6">{renderRoutes()}</div>
+          <div className="flex-1 bg-gray-100 overflow-y-auto p-6">
+            <Routes>
+              <Route path="/" element={getDefaultRoute()} />
+              {role === "admin" && (
+                <>
+                  <Route path="/admin" element={< DashboardAdmin />} />
+                  <Route path="/kelola-kelas" element={<KelolaKelas/>} />
+                  <Route path="/kelola-kelas/edit/:id" element={<EditKelas />} />
+                  <Route path="/kelola-pengajar" element={<KelolaPengajar />} />
+                  <Route path="/kelola-pengajar/edit/:id" element={<EditPengajar />} />
+                  <Route path="/kelola-siswa" element={<KelolaSiswa />} />
+                  <Route path="/kelola-siswa/edit/:id" element={<EditSiswa />} />
+                  <Route path="/kelola-pembayaran" element={<KelolaPembayaran />} />
+                  <Route path="/kelola-pelajaran" element={<KelolaPelajaran />} />
+                </>
+              )}
+              {role === "guru" && (
+                <>
+                  <Route path="/guru" element={<DashboardGuru />} />
+                  <Route path="/jadwal-kelas" element={<JadwalKelas />} />
+                  <Route path="/input-nilai" element={<InputNilai />} />
+                  <Route path="/input-presensi" element={<InputPresensi />} />
+                </>
+              )}
+              {role === "siswa" && (
+                <>
+                  <Route path="/siswa" element={<DashboardSiswa />} />
+                  <Route path="/jadwal-kelas" element={<JadwalDashboardSiswa />} />
+                  <Route path="/pembayaran" element={<PembayaranSiswa />} />
+                </>
+              )}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
         </div>
       ) : (
         <Routes>
-          {/* Route ke halaman login */}
           <Route
             path="/login"
-            element={<Login onLogin={handleLogin} />}
+            element={<Login onLogin={async () => {
+              try {
+                const sessionData = await AuthService.validateSession();
+                setRole(sessionData.role);
+                setIsLoggedIn(true);
+              } catch (error) {
+                console.error("Login validasi gagal:", error.message);
+              }
+            }} />}
           />
-          {/* Redirect ke login jika belum login */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       )}

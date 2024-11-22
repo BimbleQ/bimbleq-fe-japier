@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import ProfilePic from "../assets/profilePic.png";
+import AuthService from "../services/AuthService"; // Import AuthService
 import "../sideNav.css";
 
 const SideNav = ({ role }) => {
@@ -11,30 +12,33 @@ const SideNav = ({ role }) => {
   const menuItems = {
     admin: [
       { name: "Dashboard", to: "/admin" },
-      { name: "Kelola Kelas", to: "/admin/kelola-kelas" },
-      { name: "Kelola Pengajar", to: "/admin/kelola-pengajar" },
-      { name: "Kelola Siswa", to: "/admin/kelola-siswa" },
-      { name: "Kelola Pembayaran", to: "/admin/kelola-pembayaran" },
-      { name: "Kelola Pelajaran", to: "/admin/kelola-pelajaran" },
+      { name: "Kelola Kelas", to: "/kelola-kelas" },
+      { name: "Kelola Pengajar", to: "/kelola-pengajar" },
+      { name: "Kelola Siswa", to: "kelola-siswa" },
+      { name: "Kelola Pembayaran", to: "kelola-pembayaran" },
+      { name: "Kelola Pelajaran", to: "kelola-pelajaran" },
     ],
-    guru: [
+    pengajar: [
       { name: "Dashboard", to: "/guru" },
-      { name: "Jadwal Kelas", to: "/guru/jadwal-kelas" },
-      { name: "Input Nilai", to: "/guru/input-nilai" },
-      { name: "Input Presensi", to: "/guru/input-presensi" },
+      { name: "Jadwal Kelas", to: "jadwal-kelas" },
+      { name: "Input Nilai", to: "input-nilai" },
+      { name: "Input Presensi", to: "input-presensi" },
     ],
     siswa: [
       { name: "Dashboard", to: "/siswa" },
-      { name: "Jadwal Kelas", to: "/siswa/jadwal-kelas" },
-      { name: "Pembayaran", to: "/siswa/pembayaran" },
+      { name: "Jadwal Kelas", to: "/jadwal-kelas" },
+      { name: "Pembayaran", to: "/pembayaran" },
     ],
   };
 
-  const handleLogout = () => {
-    // Logic untuk logout
-    alert("Logout berhasil!");
-    localStorage.removeItem("role"); // Hapus role dari localStorage
-    window.location.href = "/login"; // Redirect ke halaman login
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout(); // Panggil fungsi logout dari AuthService
+      alert("Logout berhasil!");
+    } catch (error) {
+      console.error("Gagal logout:", error.message);
+      alert("Gagal logout. Silakan coba lagi.");
+    }
   };
 
   return (
