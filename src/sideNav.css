@@ -1,0 +1,112 @@
+.sideNav_wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #00a9e0;
+    color: #fff;
+    overflow: auto;
+    z-index: 1000;
+    border-right: none;
+    box-shadow: none;
+  }
+  
+  .flex-1 {
+    border-left: none; /* Hilangkan garis kiri */
+    background-color: #f5f5f5; /* Warna latar konten */
+    z-index: 1; /* Konten tidak mengganggu sidenav */
+  }
+  
+  
+  /* Logo Styling */
+  .sideNav_wrapper .logo_wrapper img {
+    width: 100%;
+  }
+  
+  .sideNav_wrapper .logo_wrapper {
+    padding: 10px 30px;
+  }
+  
+  /* Profile Section */
+  .sideNav_wrapper .profile_wrapper {
+    display: flex;
+    padding: 10px 20px;
+    align-items: center;
+    column-gap: 10px;
+  }
+  
+  .sideNav_wrapper .profile_wrapper .profilepic_wrapper img {
+    width: 70%;
+  }
+  
+  .sideNav_wrapper .profile_wrapper .namaEmail_wrapper .nama_siswa {
+    font-size: 1.4em;
+    margin: 5px 0;
+    font-weight: 700;
+  }
+  
+  .sideNav_wrapper .profile_wrapper .namaEmail_wrapper .email_siswa {
+    margin: 5px 0;
+    font-weight: 500;
+  }
+
+  
+  
+  /* Navigation Links */
+  .navLink_wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 30px 20px;
+  }
+  
+  .navLink_wrapper .nav_link {
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 5px 0;
+    color: #f5f5f5;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Hover State */
+  .navLink_wrapper .nav_link:hover {
+    background-color: #ffffff;
+    color: #00a9e0;
+  }
+  
+  /* Active State */
+  .navLink_wrapper .nav_link.active {
+    background-color: #ffffff;
+    color: #00a9e0;
+    font-weight: 700;
+  }
+
+  /* Logout Section */
+.logout_wrapper {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.logout_button {
+  width: 90%;
+  padding: 10px 0;
+  margin: 0 auto;
+  border: none;
+  border-radius: 10px;
+  background-color: #00a9e0; /* Warna biru */
+  color: #ffffff; /* Warna teks putih */
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.logout_button:hover {
+  background-color: #ff8c00; /* Warna oranye */
+  color: #ffffff; /* Warna teks tetap putih */
+}
