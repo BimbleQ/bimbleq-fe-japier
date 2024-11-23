@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import ClassRequestCard from "../../components/ClassRequestCard";
+import RegulerClassRequestCard from "../../components/RegulerClassRequestCard";
+import PrivateClassRequestCard from "../../components/PrivateClassRequestCard";
 import Calendar from "../../components/Calendar";
 import DropdownPilihKelas from "../../components/DropdownPilihKelas";
+import SiswaService from "../../services/SiswaService";
 
 const JadwalDashboardSiswa = () => {
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [privateClassRequests, setPrivateClassRequests] = useState([]);
+  const [regularClassRequests, setRegularClassRequests] = useState([]);
 
   // Fungsi untuk menampilkan modal
   const handleSubmit = (type) => {
@@ -30,6 +36,38 @@ const JadwalDashboardSiswa = () => {
     } else {
       document.body.style.overflow = "auto";
     }
+
+    const fetchRequests = async () => {
+      try {
+        const privateRequests = await SiswaService.getReqPrivateClass();
+        const regularRequests = await SiswaService.getReqRegulerClass();
+        setPrivateClassRequests(privateRequests);
+        setRegularClassRequests(regularRequests);
+      } catch (error) {
+        console.error("Failed to fetch class requests:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+  const fetchCalendarData = async () => {
+    try {
+      const data = await SiswaService.getCalendar();
+      const formattedEvents = data.map((kelas) => ({
+        title: kelas.nama_kelas,
+        date: new Date(kelas.waktu_kelas).toISOString().split("T")[0], // Format tanggal
+      }));
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Failed to fetch calendar data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+    };
+
+    fetchCalendarData();
+    fetchRequests();
+
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -42,23 +80,85 @@ const JadwalDashboardSiswa = () => {
         Dashboard / <span className="text-[#00a9e0]">Jadwal Kelas</span>
       </h1>
 
-        {/* Status Pengajuan Kelas */}
+      {/* Status Pengajuan Kelas */}
+      {/* Status Pengajuan */}
       <section>
-        <h2 className="text-lg font-semibold text-[#212121] mb-4">Status Pengajuan Kelas</h2>
-        <div className="p-4 bg-white shadow-md rounded-lg">
-          <ClassRequestCard
-            namaKelas="Fisika"
-            waktu="10:00 - 12:00"
-            statusPengajuan="Menunggu Verifikasi"
-          />
+        <h2 className="text-xl font-semibold text-[#212121] mb-4">Pengajuan Kelas</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Kelas Privat */}
+          {isLoading ? (
+              <p>Loading...</p>
+            ) : privateClassRequests.length > 0 ? (
+              privateClassRequests.map((request, index) => {
+                // Pisahkan tanggal dan waktu berdasarkan spasi
+                const [tanggalRaw, waktuRaw] = request.waktu_kelas.split(" ");
+
+                // Format tanggal menjadi "21 November 2024"
+                const tanggal = new Date(tanggalRaw).toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                });
+
+                // Gunakan waktu langsung tanpa perlu split
+                const jam = waktuRaw.slice(0, 5); // Ambil jam dalam format "HH:mm"
+
+                return (
+                  <PrivateClassRequestCard
+                    key={`private-${index}`}
+                    judulCard="Kelas Privat"
+                    mataPelajaran={request.nama_matpel}
+                    namaPengajar={request.nama_pengajar}
+                    tanggal={tanggal} // Format tanggal
+                    waktu={jam} // Format jam
+                    status={request.status_request}
+                  />
+                );
+              })
+            ) : (
+              <p>Tidak Ada Pengajuan Kelas Privat</p>
+            )}
+
+          {/* Kelas Reguler */}
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : regularClassRequests.length > 0 ? (
+            regularClassRequests.map((request, index) => (
+              <RegulerClassRequestCard
+                key={`regular-${index}`}
+                mataPelajaran={request.nama_matpel_baru}
+                kelasLama={request.nama_kelas_lama}
+                kelasBaru={request.nama_kelas_baru}
+                waktuLama={new Date(request.waktu_kelas_lama).toLocaleString("id-ID", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+                waktuBaru={new Date(request.waktu_kelas_baru).toLocaleString("id-ID", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+                namaPengajar={request.nama_pengajar_baru}
+                status={request.status_request}
+              />
+            ))
+          ) : (
+            <p> </p>
+          )}
         </div>
       </section>
 
+
        {/* Kalender */}
-       <section>
+      <section>
         <h2 className="text-lg font-semibold text-[#212121] mb-4">Kalender</h2>
         <div className="p-4 bg-white shadow-md rounded-lg">
-          <Calendar />
+          {isLoading ? <p>Loading...</p> : <Calendar events={events} />}
         </div>
       </section>
 

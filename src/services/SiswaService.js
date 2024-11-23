@@ -43,6 +43,26 @@ const SiswaService = {
     }
   },
 
+  getCalendar: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/getCalendar`, { withCredentials: true });
+      return response.data.kelas; // Return hanya data kelas
+    } catch (error) {
+      console.error("Error fetching calendar data:", error);
+      throw error;
+    }
+  },
+
+  getHistoriPembayaran: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/getHistoryBayarSiswa`, { withCredentials: true });
+      return response.data.histori; // Mengembalikan data histori dari API
+    } catch (error) {
+      console.error("Error fetching histori pembayaran:", error);
+      throw error;
+    }
+  },
+
 };
 
 export default SiswaService;

@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import TagihanCard from "../../components/TagihanCard";
 import HistoryPembayaranCard from "../../components/HistoryPembayaranCard";
-import DropdownTagihan from "../../components/DropdownTagihan"; // Mengimpor DropdownTagihan
+import PrivateScheduleCard from "../../components/PrivateScheduleCard";
+import DropdownTagihan from "../../components/DropdownTagihan";
+import SiswaService from "../../services/SiswaService";
 
 const PembayaranSiswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [tagihan, setTagihan] = useState([]);
+  const [isLoadingTagihan, setIsLoadingTagihan] = useState(true);
+  const [historiPembayaran, setHistoriPembayaran] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,6 +30,34 @@ const PembayaranSiswa = () => {
     } else {
       document.body.style.overflow = "auto";
     }
+
+    const fetchTagihan = async () => {
+      try {
+        const data = await SiswaService.getTagihan();
+        console.log("Tagihan API Data:", data);
+        setTagihan(data);
+      } catch (error) {
+        console.error("Failed to fetch tagihan:", error);
+      } finally {
+        setIsLoadingTagihan(false);
+      }
+    };
+
+    const fetchHistoriPembayaran = async () => {
+      try {
+        const data = await SiswaService.getHistoriPembayaran();
+        console.log("Histori Pembayaran API Data:", data);
+        setHistoriPembayaran(data);
+      } catch (error) {
+        console.error("Failed to fetch histori pembayaran:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHistoriPembayaran();
+    fetchTagihan();
+
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -36,15 +70,28 @@ const PembayaranSiswa = () => {
         Dashboard / <span className="text-[#00a9e0]">Pembayaran</span>
       </h1>
 
-      {/* Tagihanmu */}
-      <section>
-        <h2 className="text-lg font-semibold text-[#212121] mb-4">Tagihanmu</h2>
-        <TagihanCard
-          namaTagihan="SPP Bulan November"
-          jumlah="Rp 1.000.000,00"
-          status="Belum Lunas"
-        />
+      {/* Tagihan */}
+       <section>
+        <h2 className="text-xl font-semibold text-[#212121] mb-4">Tagihan</h2>
+        <div className="p-4 bg-white shadow-md rounded-lg">
+          {isLoadingTagihan ? (
+            <p>Loading...</p>
+          ) : tagihan.length > 0 ? (
+            tagihan.map((item, index) => (
+              <TagihanCard
+                key={index}
+                namaTagihan={`${item.jenis_tagihan}`}
+                jumlah={`Rp ${parseInt(item.jumlah).toLocaleString("id-ID")}`}
+                status={`${item.status}`}
+              />
+            ))
+          ) : (
+              <PrivateScheduleCard status="Anda sudah membayar semua tagihan, tidak ada tagihan..." />
+            
+          )}
+        </div>
       </section>
+
 
       {/* Pembayaran Tagihan */}
       <section>
@@ -89,12 +136,30 @@ const PembayaranSiswa = () => {
       {/* Histori Pembayaran */}
       <section>
         <h2 className="text-lg font-semibold text-[#212121] mb-4">Histori Pembayaran</h2>
-        <HistoryPembayaranCard
-          namaTagihan="Class Reguler Februari"
-          jumlah="1.000.000,00"
-          status="PAID"
-          tanggal="19 Februari 2024"
-        />
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : historiPembayaran.length > 0 ? (
+          historiPembayaran.map((item, index) => {
+            // Format tanggal
+            const formattedDate = new Date(item.waktu_tagihah).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            });
+
+            return (
+              <HistoryPembayaranCard
+                key={index}
+                namaTagihan={`${item.tipe_kelas} - ${item.tipe_pembayaran}`}
+                jumlah={parseInt(item.jumlah).toLocaleString("id-ID")}
+                status={item.status === "telat" ? "LATE" : "PAID"}
+                tanggal={formattedDate}
+              />
+            );
+          })
+        ) : (
+          <p>Tidak Ada Histori Pembayaran</p>
+        )}
       </section>
 
       {/* Modal */}
