@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ClassRequestCard from "../../components/ClassRequestCard";
+import RegulerClassRequestCard from "../../components/RegulerClassRequestCard";
 import Calendar from "../../components/Calendar";
 import DropdownPilihKelas from "../../components/DropdownPilihKelas";
 
@@ -46,10 +46,14 @@ const JadwalDashboardSiswa = () => {
       <section>
         <h2 className="text-lg font-semibold text-[#212121] mb-4">Status Pengajuan Kelas</h2>
         <div className="p-4 bg-white shadow-md rounded-lg">
-          <ClassRequestCard
-            namaKelas="Fisika"
-            waktu="10:00 - 12:00"
-            statusPengajuan="Menunggu Verifikasi"
+          <RegulerClassRequestCard
+            mataPelajaran="Matematika"
+            kelasLama="Kelas A"
+            kelasBaru="Kelas B"
+            waktuLama="08:00 - 09:30"
+            waktuBaru="10:00 - 11:30"
+            namaPengajar="Ibu Ani"
+            status="Menunggu Verifikasi"
           />
         </div>
       </section>
