@@ -12,6 +12,17 @@ const SiswaService = {
       throw error;
     }
   },
+
+  getTagihan: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/tagihan`, { withCredentials: true });
+      return response.data.tagihan; // Ambil array tagihan dari respons
+    } catch (error) {
+      console.error("Error fetching tagihan:", error);
+      throw error;
+    }
+  },
+  
 };
 
 export default SiswaService;
