@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import ClassRequestCard from "../../components/ClassRequestCard";
 import Calendar from "../../components/Calendar";
 import DropdownPilihKelas from "../../components/DropdownPilihKelas";
+import SiswaService from "../../services/SiswaService";
 
 const JadwalDashboardSiswa = () => {
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
@@ -30,6 +33,25 @@ const JadwalDashboardSiswa = () => {
     } else {
       document.body.style.overflow = "auto";
     }
+
+    // Fetch data kalender dari API
+  const fetchCalendarData = async () => {
+    try {
+      const data = await SiswaService.getCalendar();
+      const formattedEvents = data.map((kelas) => ({
+        title: kelas.nama_kelas,
+        date: new Date(kelas.waktu_kelas).toISOString().split("T")[0], // Format tanggal
+      }));
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Failed to fetch calendar data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+    };
+
+    fetchCalendarData();
+
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -55,10 +77,10 @@ const JadwalDashboardSiswa = () => {
       </section>
 
        {/* Kalender */}
-       <section>
+      <section>
         <h2 className="text-lg font-semibold text-[#212121] mb-4">Kalender</h2>
         <div className="p-4 bg-white shadow-md rounded-lg">
-          <Calendar />
+          {isLoading ? <p>Loading...</p> : <Calendar events={events} />}
         </div>
       </section>
 
