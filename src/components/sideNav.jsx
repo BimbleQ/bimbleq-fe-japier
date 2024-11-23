@@ -5,7 +5,7 @@ import ProfilePic from "../assets/profilePic.png";
 import AuthService from "../services/AuthService"; // Import AuthService
 import "../sideNav.css";
 
-const SideNav = ({ role }) => {
+const SideNav = ({ role, nama }) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
 
   // Menu items berdasarkan role
@@ -53,8 +53,8 @@ const SideNav = ({ role }) => {
           <img src={ProfilePic} alt="Profile" />
         </div>
         <div className="namaEmail_wrapper">
-          <p className="nama_siswa">Javier Jinan</p>
-          <p className="email_siswa">email@gmail.com</p>
+          <p className="nama_siswa">{nama || "Nama Pengguna"}</p> {/* Fallback jika nama undefined */}
+          <p className="role_siswa">{role || "Role"}</p>
         </div>
       </div>
       <hr />

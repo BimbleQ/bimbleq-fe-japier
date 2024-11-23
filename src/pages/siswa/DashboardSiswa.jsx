@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import RegulerScheduleCard from "../../components/RegulerScheduleCard";
 import PrivateScheduleCard from "../../components/PrivateScheduleCard";
 import TagihanCard from "../../components/TagihanCard";
 import ClassRequestCard from "../../components/ClassRequestCard";
 import AnnouncementCard from "../../components/AnnouncementCard";
+import SiswaService from "../../services/SiswaService";
 
-const DashboardSiswa = () => {
+  const DashboardSiswa = ({ nama }) => {
+    const [pertemuanHariIni, setPertemuanHariIni] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchPertemuan = async () => {
+        try {
+          const data = await SiswaService.getPertemuanHariIni();
+          setPertemuanHariIni(data);
+        } catch (error) {
+          console.error("Failed to fetch pertemuan:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchPertemuan();
+    }, []);
+
   const announcements = [
     { judul: "Pengumuman 1", isi: "Isi Pengumuman 1", waktu: "10:00" },
     { judul: "Pengumuman 2", isi: "Isi Pengumuman 2", waktu: "10:30" },
@@ -16,21 +35,32 @@ const DashboardSiswa = () => {
     <div className="p-6 bg-gray-100 min-h-screen space-y-6">
       {/* Header */}
       <h1 className="text-3xl font-bold text-[#212121]">
-        Selamat Datang, <span className="text-[#ff8c00]">[Nama Siswa]</span>
+        Selamat Datang, <span className="text-[#ff8c00]" id="nama_siswa">{nama || "Nama Siswa"}</span>
       </h1>
-
       {/* Jadwal Kelas */}
       <section>
         <h2 className="text-xl font-semibold text-[#212121] mb-4">Jadwal Kelas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-white shadow-md rounded-lg">
+        <div className="p-4 bg-white shadow-md rounded-lg">
             <h3 className="text-[#00a9e0] font-bold mb-4">Jadwal Kelas Reguler Hari Ini</h3>
-            <RegulerScheduleCard 
-              mataPelajaran="Matematika"
-              namaGuru="Ibu Ani"
-              kelas="Kelas A"
-              waktu="08:00 - 10:00"
-            />
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : pertemuanHariIni.length > 0 ? (
+              pertemuanHariIni.map((pertemuan, index) => (
+                <RegulerScheduleCard
+                  key={index}
+                  mataPelajaran={pertemuan.nama_matpel}
+                  namaGuru={pertemuan.nama_pengajar}
+                  kelas={pertemuan.nama_kelas}
+                  waktu={new Date(pertemuan.waktu_kelas).toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                />
+              ))
+            ) : (
+              <PrivateScheduleCard status="Tidak Ada Jadwal Hari Ini" />
+            )}
           </div>
           <div className="p-4 bg-white shadow-md rounded-lg">
             <h3 className="text-[#00a9e0] font-bold mb-4">Jadwal Kelas Privat Hari Ini</h3>

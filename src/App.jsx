@@ -34,6 +34,7 @@ import "@fontsource/poppins"; // Menggunakan font Poppins
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Status login
   const [role, setRole] = useState(null); // Role pengguna (admin, guru, siswa)
+  const [nama, setNama] = useState(""); 
   const [isLoading, setIsLoading] = useState(true); // State untuk loading
 
   // Validasi session saat aplikasi dimuat
@@ -43,10 +44,12 @@ const App = () => {
         const sessionData = await AuthService.validateSession();
         setIsLoggedIn(true);
         setRole(sessionData.role); // Simpan role dari respons API
+        setNama(sessionData.user.nama);
       } catch (error) {
         console.log("Session tidak valid:", error.message);
         setIsLoggedIn(false);
         setRole(null); // Reset role jika session tidak valid
+        setNama("");
       } finally {
         setIsLoading(false); // Set loading selesai
       }
@@ -73,7 +76,7 @@ const App = () => {
       {isLoggedIn ? (
         <div className="flex h-screen">
           {/* Sidenav */}
-          <SideNav role={role} />
+          <SideNav role={role} nama={nama} />
 
           {/* Konten */}
           <div className="flex-1 bg-gray-100 overflow-y-auto p-6">
@@ -102,7 +105,7 @@ const App = () => {
               )}
               {role === "siswa" && (
                 <>
-                  <Route path="/siswa" element={<DashboardSiswa />} />
+                  <Route path="/siswa" element={<DashboardSiswa nama={nama}/>} />
                   <Route path="/jadwal-kelas" element={<JadwalDashboardSiswa />} />
                   <Route path="/pembayaran" element={<PembayaranSiswa />} />
                 </>
@@ -112,17 +115,29 @@ const App = () => {
           </div>
         </div>
       ) : (
+        // <Routes>
+        //   <Route
+        //     path="/login"
+        //     element={<Login onLogin={async () => {
+        //       try {
+        //         const sessionData = await AuthService.validateSession();
+        //         setRole(sessionData.role);
+        //         setIsLoggedIn(true);
+        //       } catch (error) {
+        //         console.error("Login validasi gagal:", error.message);
+        //       }
+        //     }} />}
+        //   />
+        //   <Route path="*" element={<Navigate to="/login" />} />
+        // </Routes>
+
         <Routes>
           <Route
             path="/login"
-            element={<Login onLogin={async () => {
-              try {
-                const sessionData = await AuthService.validateSession();
-                setRole(sessionData.role);
-                setIsLoggedIn(true);
-              } catch (error) {
-                console.error("Login validasi gagal:", error.message);
-              }
+            element={<Login onLogin={({ role, nama }) => {
+              setRole(role);
+              setNama(nama);
+              setIsLoggedIn(true);
             }} />}
           />
           <Route path="*" element={<Navigate to="/login" />} />

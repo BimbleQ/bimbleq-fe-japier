@@ -12,26 +12,27 @@ const Login = ({ onLogin }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     try {
       const data = await AuthService.login(username, password);
       console.log("Login sukses:", data);
-
+  
       // Panggil onLogin untuk memperbarui state di App.jsx
-      onLogin(data.role);
-
+      onLogin({ role: data.user.role, nama: data.user.nama });
+  
       // Navigasikan ke dashboard berdasarkan role
-      if (data.role === "admin") {
+      if (data.user.role === "admin") {
         navigate("/admin");
-      } else if (data.role === "guru") {
+      } else if (data.user.role === "guru") {
         navigate("/guru");
-      } else if (data.role === "siswa") {
+      } else if (data.user.role === "siswa") {
         navigate("/siswa");
       }
     } catch (err) {
       setError(err.message);
     }
   };
+  
 
   return (
     <div className="h-screen w-full flex">
