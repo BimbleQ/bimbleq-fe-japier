@@ -21,6 +21,8 @@ const KelolaSiswa = () => {
     namaSiswa: "",
     kontak: "",
     alamat: "",
+    usernameSiswa: "",
+    passwordSiswa: "",
   });
 
   const handleInputChange = (e) => {
@@ -29,12 +31,12 @@ const KelolaSiswa = () => {
   };
 
   const handleAddStudent = () => {
-    if (newStudent.namaSiswa && newStudent.kontak && newStudent.alamat) {
+    if (newStudent.namaSiswa && newStudent.kontak && newStudent.alamat && newStudent.usernameSiswa && newStudent.passwordSiswa) {
       setStudents((prev) => [
         ...prev,
         { ...newStudent, id: prev.length + 1 },
       ]);
-      setNewStudent({ namaSiswa: "", kontak: "", alamat: "" });
+      setNewStudent({ namaSiswa: "", kontak: "", alamat: "", usernameSiswa: "", passwordSiswa: "" });
     } else {
       alert("Mohon lengkapi semua data!");
     }
@@ -84,6 +86,23 @@ const KelolaSiswa = () => {
             placeholder="Alamat"
             className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <input
+            type="text"
+            name="usernameSiswa"
+            value={newStudent.usernameSiswa}
+            onChange={handleInputChange}
+            placeholder="Username Siswa"
+            className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            name="passwordSiswa"
+            value={newStudent.passwordSiswa}
+            onChange={handleInputChange}
+            placeholder="Password Siswa"
+            className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          
           <button
             onClick={handleAddStudent}
             className="w-full bg-[#00a9e0] text-white rounded-lg p-3 font-semibold hover:bg-[#007ab8] transition"
