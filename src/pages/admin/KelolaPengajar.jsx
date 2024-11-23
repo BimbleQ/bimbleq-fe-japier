@@ -8,6 +8,8 @@ const KelolaPengajar = () => {
     namaPengajar: "",
     spesialisasi: "",
     kontak: "",
+    usernamePengajar: "",
+    passwordPengajar: "",
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,6 +35,8 @@ const KelolaPengajar = () => {
       namaPengajar: formData.namaPengajar,
       kontak: formData.kontak,
       spesialisasi: formData.spesialisasi,
+      usernamePengajar: formData.usernamePengajar,
+      passwordPengajar: formData.passwordPengajar,
     };
 
     setPengajarList((prevList) => [...prevList, newPengajar]);
@@ -41,6 +45,8 @@ const KelolaPengajar = () => {
       namaPengajar: "",
       spesialisasi: "",
       kontak: "",
+      usernamePengajar: "",
+      passwordPengajar: "",
     });
   };
 
@@ -101,6 +107,24 @@ const KelolaPengajar = () => {
               name="kontak"
               placeholder="Kontak"
               value={formData.kontak}
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="text"
+              name="usernamePengajar"
+              placeholder="Username Pengajar"
+              value={formData.usernamePengajar}
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="text"
+              name="passwordPengajar"
+              placeholder="Password Pengajar"
+              value={formData.passwordPengajar}
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
