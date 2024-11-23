@@ -63,6 +63,42 @@ const SiswaService = {
     }
   },
 
+  getMataPelajaran: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/pelajaran`, { withCredentials: true });
+      return response.data.mataPelajaran;
+    } catch (error) {
+      console.error("Error fetching mata pelajaran:", error);
+      throw error;
+    }
+  },
+
+  // Fetch pengajar berdasarkan mata pelajaran
+  getPengajarByMatpel: async (idMatpel) => {
+    try {
+      const response = await axios.get(`${API_URL}/pengajarMatpel?id_matpel=${idMatpel}`, {
+        withCredentials: true,
+      });
+      return response.data.pengajar;
+    } catch (error) {
+      console.error("Error fetching pengajar:", error);
+      throw error;
+    }
+  },
+
+  // Submit pengajuan kelas privat
+  submitPrivateClassRequest: async (payload) => {
+    try {
+      const response = await axios.post(`${API_URL}/crePrivateClass`, payload, {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error submitting private class request:", error);
+      throw error;
+    }
+  },
+
 };
 
 export default SiswaService;
