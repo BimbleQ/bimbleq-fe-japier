@@ -53,6 +53,16 @@ const SiswaService = {
     }
   },
 
+  getHistoriPembayaran: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/getHistoryBayarSiswa`, { withCredentials: true });
+      return response.data.histori; // Mengembalikan data histori dari API
+    } catch (error) {
+      console.error("Error fetching histori pembayaran:", error);
+      throw error;
+    }
+  },
+
 };
 
 export default SiswaService;

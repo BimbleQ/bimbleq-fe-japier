@@ -1,7 +1,7 @@
 import React from "react";
 import { FaClock } from "react-icons/fa"; // Menggunakan ikon dari react-icons
 
-const ClassRequestCard = ({
+const PrivateClassRequestCard = ({
   judulCard = "Kelas Privat",
   mataPelajaran = "[Nama Mata Pelajaran]",
   namaPengajar = "[Nama Pengajar]",
@@ -35,4 +35,4 @@ const ClassRequestCard = ({
   );
 };
 
-export default ClassRequestCard;
+export default PrivateClassRequestCard;

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import RegulerScheduleCard from "../../components/RegulerScheduleCard";
 import PrivateScheduleCard from "../../components/PrivateScheduleCard";
 import TagihanCard from "../../components/TagihanCard";
-import ClassRequestCard from "../../components/ClassRequestCard";
+import PrivateClassRequestCard from "../../components/PrivateClassRequestCard";
+import RegulerClassRequestCard from "../../components/RegulerClassRequestCard";
 import AnnouncementCard from "../../components/AnnouncementCard";
 import SiswaService from "../../services/SiswaService";
 
@@ -90,11 +91,11 @@ import SiswaService from "../../services/SiswaService";
       fetchRequests();
     }, []);
 
-  const announcements = [
-    { judul: "Pengumuman 1", isi: "Isi Pengumuman 1", waktu: "10:00" },
-    { judul: "Pengumuman 2", isi: "Isi Pengumuman 2", waktu: "10:30" },
-    { judul: "Pengumuman 3", isi: "Isi Pengumuman 3", waktu: "11:00" },
-  ];
+  // const announcements = [
+  //   { judul: "Pengumuman 1", isi: "Isi Pengumuman 1", waktu: "10:00" },
+  //   { judul: "Pengumuman 2", isi: "Isi Pengumuman 2", waktu: "10:30" },
+  //   { judul: "Pengumuman 3", isi: "Isi Pengumuman 3", waktu: "11:00" },
+  // ];
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen space-y-6">
@@ -180,7 +181,7 @@ import SiswaService from "../../services/SiswaService";
                 key={index}
                 namaTagihan={`${item.jenis_tagihan}`}
                 jumlah={`Rp ${parseInt(item.jumlah).toLocaleString("id-ID")}`}
-                status={item.status === "pending" ? "Belum Lunas" : "Lunas"}
+                status={`${item.status}`}
               />
             ))
           ) : (
@@ -196,40 +197,49 @@ import SiswaService from "../../services/SiswaService";
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Kelas Privat */}
           {isLoading ? (
-            <p>Loading...</p>
-          ) : privateClassRequests.length > 0 ? (
-            privateClassRequests.map((request, index) => (
-              <ClassRequestCard
-                key={`private-${index}`}
-                judulCard="Kelas Privat"
-                mataPelajaran={request.nama_matpel}
-                namaPengajar={request.nama_pengajar}
-                waktu={new Date(request.tanggal_request).toLocaleString("id-ID", {
+              <p>Loading...</p>
+            ) : privateClassRequests.length > 0 ? (
+              privateClassRequests.map((request, index) => {
+                // Pisahkan tanggal dan waktu berdasarkan spasi
+                const [tanggalRaw, waktuRaw] = request.waktu_kelas.split(" ");
+
+                // Format tanggal menjadi "21 November 2024"
+                const tanggal = new Date(tanggalRaw).toLocaleDateString("id-ID", {
                   day: "2-digit",
                   month: "long",
                   year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-                status={request.status_request}
-              />
-            ))
-          ) : (
-            <p>Tidak Ada Pengajuan Kelas Privat</p>
-          )}
+                });
+
+                // Gunakan waktu langsung tanpa perlu split
+                const jam = waktuRaw.slice(0, 5); // Ambil jam dalam format "HH:mm"
+
+                return (
+                  <PrivateClassRequestCard
+                    key={`private-${index}`}
+                    judulCard="Kelas Privat"
+                    mataPelajaran={request.nama_matpel}
+                    namaPengajar={request.nama_pengajar}
+                    tanggal={tanggal} // Format tanggal
+                    waktu={jam} // Format jam
+                    status={request.status_request}
+                  />
+                );
+              })
+            ) : (
+              <p>Tidak Ada Pengajuan Kelas Privat</p>
+            )}
 
           {/* Kelas Reguler */}
           {isLoading ? (
             <p>Loading...</p>
           ) : regularClassRequests.length > 0 ? (
             regularClassRequests.map((request, index) => (
-              <ClassRequestCard
+              <RegulerClassRequestCard
                 key={`regular-${index}`}
-                judulCard="Kelas Reguler"
                 mataPelajaran={request.nama_matpel_baru}
                 kelasLama={request.nama_kelas_lama}
                 kelasBaru={request.nama_kelas_baru}
-                waktuAwal={new Date(request.waktu_kelas_lama).toLocaleString("id-ID", {
+                waktuLama={new Date(request.waktu_kelas_lama).toLocaleString("id-ID", {
                   day: "2-digit",
                   month: "long",
                   year: "numeric",
@@ -248,11 +258,11 @@ import SiswaService from "../../services/SiswaService";
               />
             ))
           ) : (
-            <p>Tidak Ada Pengajuan Kelas Reguler</p>
+            <p> </p>
           )}
         </div>
       </section>
-      
+
 
       {/* masih belum bisa di implementasikan! */}
       {/* Pengumuman */}
