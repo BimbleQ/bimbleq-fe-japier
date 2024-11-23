@@ -42,7 +42,7 @@ const JadwalDashboardSiswa = () => {
         Dashboard / <span className="text-[#00a9e0]">Jadwal Kelas</span>
       </h1>
 
-      {/* Status Pengajuan Kelas */}
+        {/* Status Pengajuan Kelas */}
       <section>
         <h2 className="text-lg font-semibold text-[#212121] mb-4">Status Pengajuan Kelas</h2>
         <div className="p-4 bg-white shadow-md rounded-lg">
@@ -51,6 +51,14 @@ const JadwalDashboardSiswa = () => {
             waktu="10:00 - 12:00"
             statusPengajuan="Menunggu Verifikasi"
           />
+        </div>
+      </section>
+
+       {/* Kalender */}
+       <section>
+        <h2 className="text-lg font-semibold text-[#212121] mb-4">Kalender</h2>
+        <div className="p-4 bg-white shadow-md rounded-lg">
+          <Calendar />
         </div>
       </section>
 
@@ -129,7 +137,7 @@ const JadwalDashboardSiswa = () => {
         </div>
       </section>
 
-      {/* Jadwal Kelas Mingguan */}
+      {/* Jadwal Kelas Mingguan
       <section>
         <h2 className="text-lg font-semibold text-[#212121] mb-4">Jadwal Kelas Mingguan</h2>
         <div className="p-4 bg-white shadow-md rounded-lg">
@@ -160,15 +168,7 @@ const JadwalDashboardSiswa = () => {
             </tbody>
           </table>
         </div>
-      </section>
-
-      {/* Kalender */}
-      <section>
-        <h2 className="text-lg font-semibold text-[#212121] mb-4">Kalender</h2>
-        <div className="p-4 bg-white shadow-md rounded-lg">
-          <Calendar />
-        </div>
-      </section>
+      </section> */}
 
       {/* Modal */}
       {isModalOpen && (
