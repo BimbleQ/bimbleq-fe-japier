@@ -48,7 +48,7 @@ const PembayaranSiswa = () => {
 
       {/* Pembayaran Tagihan */}
       <section>
-        <h2 className="text-lg font-semibold text-[#212121] mb-4">Pembayaran Tagihan</h2>
+        <h2 className="text-lg font-semibold text-[#212121] mb-4">Upload Bukti Pembayaran</h2>
         <div className="p-4 bg-white shadow-md rounded-lg">
           <h3 className="text-[#00a9e0] font-bold mb-4">Form Upload Bukti Pembayaran Tagihan</h3>
           <form className="space-y-4" onSubmit={handleSubmit}>
