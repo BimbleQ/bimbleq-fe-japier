@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import ProfilePic from "../assets/profilePic.png";
-import AuthService from "../services/AuthService"; // Import AuthService
+import AuthService from "../services/AuthService"; 
 import "../sideNav.css";
 
 const SideNav = ({ role, nama }) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
 
-  // Menu items berdasarkan role
+  
   const menuItems = {
     admin: [
       { name: "Dashboard", to: "/admin" },
@@ -33,7 +33,7 @@ const SideNav = ({ role, nama }) => {
 
   const handleLogout = async () => {
     try {
-      await AuthService.logout(); // Panggil fungsi logout dari AuthService
+      await AuthService.logout(); 
       alert("Logout berhasil!");
     } catch (error) {
       console.error("Gagal logout:", error.message);

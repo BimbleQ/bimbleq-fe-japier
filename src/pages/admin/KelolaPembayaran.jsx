@@ -32,34 +32,17 @@ const KelolaPembayaran = () => {
     },
   ]);
 
-  const handleAction = (id, action) => {
-    setPayments((prevPayments) =>
-      prevPayments.map((payment) =>
-        payment.id === id ? { ...payment, status: action } : payment
-      )
-    );
-  };
-
-  const pendingPaymentsCount = payments.filter(
-    (payment) => payment.status === null
-  ).length;
-
   const [jumlahTagihanPending, setJumlahTagihanPending] = useState(0);
   const [getTagihan, setPembayaran] = useState([]);
   const [error, setError] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Ambil data jumlah kelas aktif dari API
     const fetchPembayaran = async () => {
       try {
         const data = await getJumlahTagihanPending();
-        setJumlahTagihanPending(data.jumlah_tagihan_pending); // Update state dengan data dari API
+        setJumlahTagihanPending(data.jumlah_tagihan_pending);
       } catch (error) {
-        console.error(
-          "Terjadi kesalahan saat mengambil data jumlah kelas aktif:",
-          error
-        );
+        console.error("Error fetching tagihan:", error);
       }
     };
 
@@ -70,7 +53,6 @@ const KelolaPembayaran = () => {
     const fetchData = async () => {
       try {
         const data = await getPembayaran();
-        // console.log("Data yang diterima dari API:", data);
         setPembayaran(data);
       } catch (err) {
         setError("Gagal memuat data pembayaran.");
@@ -80,44 +62,24 @@ const KelolaPembayaran = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getPembayaran();
-  //       setPembayaran(data);
-  //     } catch (err) {
-  //       setError("Gagal memuat data pembayaran.");
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  //   useEffect(() => {
-  //     const fetchData = async () => {
-  //         try {
-  //             const data = await getTagihan(); // Panggil API
-  //             setTagihan(data); // Simpan data ke state
-  //         } catch (error) {
-  //             console.error("Terjadi kesalahan saat mengambil data:", error);
-  //         } finally {
-  //             setIsLoading(false); // Matikan loading
-  //         }
-  //     };
-
-  //     fetchData();
-  // }, []);
+  const handleAction = (id, action) => {
+    setPayments((prevPayments) =>
+      prevPayments.map((payment) =>
+        payment.id === id ? { ...payment, status: action } : payment
+      )
+    );
+  };
 
   return (
-    <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col gap-6">
       {/* Header */}
       <h1 className="text-xl font-bold text-[#212121]">
         Dashboard / <span className="text-[#00a9e0]">Kelola Pembayaran</span>
       </h1>
 
-      {/* Data */}
+      {/* Data Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow text-center">
+        <div className="bg-white p-6 rounded-lg shadow-md text-center">
           <h3 className="text-[#ff8c00] font-bold text-lg">
             Pembayaran Menunggu Verifikasi
           </h3>
@@ -128,24 +90,41 @@ const KelolaPembayaran = () => {
       </div>
 
       {/* Tabel Daftar Pembayaran */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-[#212121] font-bold text-lg mb-4">
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-bold text-[#212121] mb-4">
           Daftar Pembayaran
         </h3>
         {error ? (
           <p className="text-red-500">{error}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
+            <table className="table-auto w-full border border-gray-300">
+              <thead className="bg-gray-200">
                 <tr>
-                  <th className="py-2 px-4 border-b">ID Pembayaran</th>
-                  <th className="py-2 px-4 border-b">Nama Siswa</th>
-                  <th className="py-2 px-4 border-b">Tipe Kelas</th>
-                  <th className="py-2 px-4 border-b">Tipe Pembayaran</th>
-                  <th className="py-2 px-4 border-b">Jumlah</th>
-                  <th className="py-2 px-4 border-b">Status</th>
-                  <th className="py-2 px-4 border-b">Bukti Pembayaran</th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    ID Pembayaran
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    Nama Siswa
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    Tipe Kelas
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    Tipe Pembayaran
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    Jumlah
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    Status
+                  </th>
+                  <th className="py-2 px-4 border-b text-left text-gray-600 font-semibold">
+                    Bukti Pembayaran
+                  </th>
+                  <th className="py-2 px-4 border-b text-center text-gray-600 font-semibold">
+                    Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -155,12 +134,8 @@ const KelolaPembayaran = () => {
                       {item.id_pembayaran}
                     </td>
                     <td className="py-2 px-4 border-b">{item.nama_siswa}</td>
-                    <td className="py-2 px-4 border-b text-center">
-                      {item.tipe_kelas}
-                    </td>
-                    <td className="py-2 px-4 border-b text-center">
-                      {item.tipe_pembayaran}
-                    </td>
+                    <td className="py-2 px-4 border-b">{item.tipe_kelas}</td>
+                    <td className="py-2 px-4 border-b">{item.tipe_pembayaran}</td>
                     <td className="py-2 px-4 border-b text-right">
                       {parseFloat(item.jumlah).toLocaleString("id-ID", {
                         style: "currency",
@@ -170,11 +145,11 @@ const KelolaPembayaran = () => {
                     <td
                       className={`py-2 px-4 border-b text-center ${
                         item.status === "lunas"
-                          ? "text-green-500"
-                          : "text-red-500"
+                          ? "text-green-500 font-bold"
+                          : "text-red-500 font-bold"
                       }`}
                     >
-                      {item.status}
+                      {item.status || "Menunggu"}
                     </td>
                     <td className="py-2 px-4 border-b text-center">
                       {item.link_bukti ? (
@@ -190,84 +165,26 @@ const KelolaPembayaran = () => {
                         "Tidak Ada"
                       )}
                     </td>
+                    <td className="py-2 px-4 border-b flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleAction(item.id_pembayaran, "lunas")}
+                        className="bg-[#00a9e0] text-white px-4 py-2 rounded-md hover:bg-[#007ab8] transition"
+                      >
+                        Terima
+                      </button>
+                      <button
+                        onClick={() => handleAction(item.id_pembayaran, "tolak")}
+                        className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                      >
+                        Tolak
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-        {/* {error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4 border-b">ID Pembayaran</th>
-                  <th className="py-2 px-4 border-b">Nama Siswa</th>
-                  <th className="py-2 px-4 border-b">Tipe Kelas</th>
-                  <th className="py-2 px-4 border-b">Tipe Pembayaran</th>
-                  <th className="py-2 px-4 border-b">Jumlah</th>
-                  <th className="py-2 px-4 border-b">Status</th>
-                  <th className="py-2 px-4 border-b">Bukti Pembayaran</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getTagihan && getTagihan.length > 0 ? (
-                  getTagihan.map((item) => (
-                    <tr key={item.id_pembayaran}>
-                      <td className="py-2 px-4 border-b text-center">
-                        {item.id_pembayaran}
-                      </td>
-                      <td className="py-2 px-4 border-b">{item.nama_siswa}</td>
-                      <td className="py-2 px-4 border-b text-center">
-                        {item.tipe_kelas}
-                      </td>
-                      <td className="py-2 px-4 border-b text-center">
-                        {item.tipe_pembayaran}
-                      </td>
-                      <td className="py-2 px-4 border-b text-right">
-                        {parseFloat(item.jumlah).toLocaleString("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                        })}
-                      </td>
-                      <td
-                        className={`py-2 px-4 border-b text-center ${
-                          item.status === "lunas"
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }`}
-                      >
-                        {item.status}
-                      </td>
-                      <td className="py-2 px-4 border-b text-center">
-                        {item.link_bukti ? (
-                          <a
-                            href={item.link_bukti}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline"
-                          >
-                            Lihat Bukti
-                          </a>
-                        ) : (
-                          "Tidak Ada"
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center py-4">
-                      Tidak ada data pembayaran.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )} */}
       </div>
     </div>
   );

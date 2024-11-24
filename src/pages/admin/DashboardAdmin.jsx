@@ -9,14 +9,23 @@ import {
 } from "../../services/AdminService";
 import AktivitasTerbaru from "../../components/AktivitasTerbaru";
 import Calendar from "../../components/Calendar";
+import { useNavigate } from "react-router-dom";
+
 
 const DashboardAdmin = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   const [jumlahKelasAktif, setJumlahKelasAktif] = useState(0);
   const [jumlahPengajar, setJumlahPengajar] = useState(0);
   const [jumlahSiswa, setJumlahSiswa] = useState(0);
   const [jumlahTagihanPending, setJumlahTagihanPending] = useState(0);
   const [jumlahPengajuanPrivat, setJumlahPengajuanPrivat] = useState(0);
   const [jumlahPengajuanReguler, setJumlahPengajuanReguler] = useState(0);
+
 
   useEffect(() => {
     // Ambil data jumlah kelas aktif dari API
@@ -104,13 +113,16 @@ const DashboardAdmin = () => {
       {/* Aksi Cepat */}
       <h2 className="text-lg font-semibold text-[#212121] mb-2">Aksi Cepat</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button className="bg-[#00a9e0] text-white font-bold p-4 rounded-lg shadow hover:bg-[#007ab8] transition">
+        <button onClick={() => handleNavigation("/kelola-kelas")}
+        className="bg-[#00a9e0] text-white font-bold p-4 rounded-lg shadow hover:bg-[#007ab8] transition">
           Buat Kelas
         </button>
-        <button className="bg-[#00a9e0] text-white font-bold p-4 rounded-lg shadow hover:bg-[#007ab8] transition">
+        <button onClick={() => handleNavigation("/kelola-pembayaran")}
+        className="bg-[#00a9e0] text-white font-bold p-4 rounded-lg shadow hover:bg-[#007ab8] transition">
           Verifikasi Pembayaran
         </button>
-        <button className="bg-[#00a9e0] text-white font-bold p-4 rounded-lg shadow hover:bg-[#007ab8] transition">
+        <button onClick={() => handleNavigation("/kelola-kelas")}
+        className="bg-[#00a9e0] text-white font-bold p-4 rounded-lg shadow hover:bg-[#007ab8] transition">
           Verifikasi Kelas
         </button>
       </div>
