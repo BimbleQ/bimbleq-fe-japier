@@ -1,8 +1,30 @@
-# React + Vite
+# 🌟 Frontend - React.js + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend repository for **BimbleQ**, a platform designed to enhance the learning experience for students and streamline operations for tutoring centers. Built with **React.js**, the frontend provides an intuitive interface for administrators, students, and teachers to interact with the system.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
+
+- **Dashboard Management**: Easily manage schedules, students, and billing.
+- **CRUD Operations**: Seamless integration with backend APIs for real-time updates.
+- **Responsive Design**: Optimized for desktop and mobile experiences.
+
+---
+
+## 🛠️ Technologies
+
+- **React.js** for the user interface
+- **Axios** for API calls
+- **Tailwind CSS** for styling
+- **React Router** for navigation
+
+---
+
+## 📦 Installation
+
+Clone the repository:  
+   ```bash
+   git clone https://github.com/BimbleQ/bimbleq-fe-japier.git
+   cd bimbleq-fe-japier
+
