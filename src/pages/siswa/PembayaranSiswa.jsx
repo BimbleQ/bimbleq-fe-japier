@@ -99,15 +99,17 @@ const PembayaranSiswa = () => {
         <div className="p-4 bg-white shadow-md rounded-lg">
           <h3 className="text-[#00a9e0] font-bold mb-4">Form Upload Bukti Pembayaran Tagihan</h3>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <DropdownTagihan /> {/* DropdownTagihan menggantikan dropdown lama */}
+            <DropdownTagihan /> {/* DropdownTagihan untuk menampilkan data tagihan yang sudah di filter berdasarkan siswa dan status tagihan unpaid, dropdown ini menggunakjan API  */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Nominal</label>
               <input
                 type="text"
                 className="w-full p-2 border rounded-lg"
-                placeholder="Masukkan nominal pembayaran"
-              />
+                placeholder="Masukkan nominal pembayaran" 
+                id ="pembayaran_nominal"
+              />  {/* input ini dipakai untuk menampilkan nominal yg dipili pada dropdown sebelumnya */}
             </div>
+           
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Unggah File Bukti Pembayaran
@@ -119,7 +121,7 @@ const PembayaranSiswa = () => {
                   className="p-2 bg-[#00a9e0] text-white rounded-lg cursor-pointer hover:bg-[#007bb5] transition duration-200"
                 >
                   Unggah
-                </label>
+                </label>  {/* input untuk mengupload bukti foto */}
                 <p className="text-sm text-gray-500">Belum ada file terpilih</p>
               </div>
             </div>
