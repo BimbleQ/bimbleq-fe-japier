@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getJumlahSiswa } from "../../services/AdminService";
 import { Link } from "react-router-dom";
 
 const KelolaSiswa = () => {
@@ -30,15 +31,29 @@ const KelolaSiswa = () => {
 
   const handleAddStudent = () => {
     if (newStudent.namaSiswa && newStudent.kontak && newStudent.alamat) {
-      setStudents((prev) => [
-        ...prev,
-        { ...newStudent, id: prev.length + 1 },
-      ]);
+      setStudents((prev) => [...prev, { ...newStudent, id: prev.length + 1 }]);
       setNewStudent({ namaSiswa: "", kontak: "", alamat: "" });
     } else {
       alert("Mohon lengkapi semua data!");
     }
   };
+
+  const [jumlahSiswa, setJumlahSiswa] = useState(0);
+
+  useEffect(() => {
+    const fetchSiswa = async () => {
+      try {
+        const data = await getJumlahSiswa();
+        setJumlahSiswa(data.jumlah_siswa);
+      } catch (error) {
+        console.error(
+          "Terjadi kesalahan saat mengambil data jumlah kelas aktif:",
+          error
+        );
+      }
+    };
+    fetchSiswa();
+  }, []);
 
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
@@ -52,7 +67,7 @@ const KelolaSiswa = () => {
         {/* Total Siswa */}
         <div className="bg-white p-6 rounded-lg shadow text-center">
           <h3 className="text-[#00a9e0] font-bold text-lg">Total Siswa</h3>
-          <p className="text-[#00a9e0] text-4xl font-bold">{students.length}</p>
+          <p className="text-[#00a9e0] text-4xl font-bold">{jumlahSiswa}</p>
         </div>
 
         {/* Form Tambah Siswa */}
@@ -111,15 +126,23 @@ const KelolaSiswa = () => {
               <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">
                 Nama Siswa
               </th>
-              <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">Kontak</th>
-              <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">Alamat</th>
-              <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">Aksi</th>
+              <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">
+                Kontak
+              </th>
+              <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">
+                Alamat
+              </th>
+              <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredStudents.map((student) => (
               <tr key={student.id}>
-                <td className="p-3 border border-gray-300">{student.namaSiswa}</td>
+                <td className="p-3 border border-gray-300">
+                  {student.namaSiswa}
+                </td>
                 <td className="p-3 border border-gray-300">{student.kontak}</td>
                 <td className="p-3 border border-gray-300">{student.alamat}</td>
                 <td className="p-3 border border-gray-300">

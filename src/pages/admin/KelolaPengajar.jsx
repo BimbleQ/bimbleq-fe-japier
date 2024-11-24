@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getJumlahPengajar } from "../../services/AdminService";
 
 const KelolaPengajar = () => {
   const navigate = useNavigate();
@@ -13,8 +14,18 @@ const KelolaPengajar = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [pengajarList, setPengajarList] = useState([
-    { id: 1, namaPengajar: "John Doe", kontak: "099038902", spesialisasi: "Bahasa Inggris" },
-    { id: 2, namaPengajar: "Jane Smith", kontak: "0881234567", spesialisasi: "Matematika" },
+    {
+      id: 1,
+      namaPengajar: "John Doe",
+      kontak: "099038902",
+      spesialisasi: "Bahasa Inggris",
+    },
+    {
+      id: 2,
+      namaPengajar: "Jane Smith",
+      kontak: "0881234567",
+      spesialisasi: "Matematika",
+    },
   ]);
 
   const handleInputChange = (e) => {
@@ -54,6 +65,23 @@ const KelolaPengajar = () => {
       pengajar.spesialisasi.toLowerCase().includes(searchTerm)
   );
 
+  const [jumlahPengajar, setJumlahPengajar] = useState(0);
+
+  useEffect(() => {
+    const fetchPengajar = async () => {
+      try {
+        const data = await getJumlahPengajar();
+        setJumlahPengajar(data.jumlah_pengajar);
+      } catch (error) {
+        console.error(
+          "Terjadi kesalahan saat mengambil data jumlah kelas aktif:",
+          error
+        );
+      }
+    };
+    fetchPengajar();
+  }, []);
+
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
       {/* Breadcrumb */}
@@ -66,12 +94,14 @@ const KelolaPengajar = () => {
         {/* Total Pengajar */}
         <div className="bg-white p-6 rounded-lg shadow text-center">
           <h3 className="text-[#00a9e0] font-bold text-lg">Total Pengajar</h3>
-          <p className="text-[#00a9e0] text-4xl font-bold">{pengajarList.length}</p>
+          <p className="text-[#00a9e0] text-4xl font-bold">{jumlahPengajar}</p>
         </div>
 
         {/* Form Tambah Pengajar Baru */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">Form Tambah Pengajar Baru</h3>
+          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">
+            Form Tambah Pengajar Baru
+          </h3>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input
               type="text"
@@ -130,22 +160,38 @@ const KelolaPengajar = () => {
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Nama Pengajar</th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Kontak</th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Spesialisasi</th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Aksi</th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
+                Nama Pengajar
+              </th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
+                Kontak
+              </th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
+                Spesialisasi
+              </th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredPengajarList.length > 0 ? (
               filteredPengajarList.map((pengajar) => (
                 <tr key={pengajar.id}>
-                  <td className="p-3 border border-gray-300">{pengajar.namaPengajar}</td>
-                  <td className="p-3 border border-gray-300">{pengajar.kontak}</td>
-                  <td className="p-3 border border-gray-300">{pengajar.spesialisasi}</td>
+                  <td className="p-3 border border-gray-300">
+                    {pengajar.namaPengajar}
+                  </td>
+                  <td className="p-3 border border-gray-300">
+                    {pengajar.kontak}
+                  </td>
+                  <td className="p-3 border border-gray-300">
+                    {pengajar.spesialisasi}
+                  </td>
                   <td className="p-3 border border-gray-300">
                     <button
-                      onClick={() => navigate(`/kelola-pengajar/edit/${pengajar.id}`)}
+                      onClick={() =>
+                        navigate(`/kelola-pengajar/edit/${pengajar.id}`)
+                      }
                       className="text-[#00a9e0] hover:underline"
                     >
                       Edit
