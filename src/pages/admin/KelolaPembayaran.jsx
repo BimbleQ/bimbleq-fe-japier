@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  getJumlahTagihanPending,
+  getPembayaran,
+} from "../../services/AdminService";
 
 const KelolaPembayaran = () => {
   const [payments, setPayments] = useState([
@@ -40,6 +44,70 @@ const KelolaPembayaran = () => {
     (payment) => payment.status === null
   ).length;
 
+  const [jumlahTagihanPending, setJumlahTagihanPending] = useState(0);
+  const [getTagihan, setPembayaran] = useState([]);
+  const [error, setError] = useState(null);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Ambil data jumlah kelas aktif dari API
+    const fetchPembayaran = async () => {
+      try {
+        const data = await getJumlahTagihanPending();
+        setJumlahTagihanPending(data.jumlah_tagihan_pending); // Update state dengan data dari API
+      } catch (error) {
+        console.error(
+          "Terjadi kesalahan saat mengambil data jumlah kelas aktif:",
+          error
+        );
+      }
+    };
+
+    fetchPembayaran();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getPembayaran();
+        // console.log("Data yang diterima dari API:", data);
+        setPembayaran(data);
+      } catch (err) {
+        setError("Gagal memuat data pembayaran.");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await getPembayaran();
+  //       setPembayaran(data);
+  //     } catch (err) {
+  //       setError("Gagal memuat data pembayaran.");
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  //   useEffect(() => {
+  //     const fetchData = async () => {
+  //         try {
+  //             const data = await getTagihan(); // Panggil API
+  //             setTagihan(data); // Simpan data ke state
+  //         } catch (error) {
+  //             console.error("Terjadi kesalahan saat mengambil data:", error);
+  //         } finally {
+  //             setIsLoading(false); // Matikan loading
+  //         }
+  //     };
+
+  //     fetchData();
+  // }, []);
+
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
       {/* Header */}
@@ -54,7 +122,7 @@ const KelolaPembayaran = () => {
             Pembayaran Menunggu Verifikasi
           </h3>
           <p className="text-[#ff8c00] text-4xl font-bold">
-            {pendingPaymentsCount}
+            {jumlahTagihanPending}
           </p>
         </div>
       </div>
@@ -64,72 +132,142 @@ const KelolaPembayaran = () => {
         <h3 className="text-[#212121] font-bold text-lg mb-4">
           Daftar Pembayaran
         </h3>
-        <table className="table-auto w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Nama Siswa
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Nominal
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Waktu Pembayaran
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Bukti Pembayaran
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Aksi
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map((payment) => (
-              <tr key={payment.id}>
-                <td className="p-3 border border-gray-300">
-                  {payment.namaSiswa}
-                </td>
-                <td className="p-3 border border-gray-300">{payment.nominal}</td>
-                <td className="p-3 border border-gray-300">
-                  {payment.waktuPembayaran}
-                </td>
-                <td className="p-3 border border-gray-300">
-                  <a
-                    href={`/${payment.buktiPembayaran}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#00a9e0] hover:underline"
-                  >
-                    [Lihat Bukti Pembayaran]
-                  </a>
-                </td>
-                <td className="p-3 border border-gray-300 flex gap-2">
-                  <button
-                    onClick={() => handleAction(payment.id, "Terima")}
-                    className={`px-4 py-2 rounded-lg font-semibold ${
-                      payment.status === "Terima"
-                        ? "bg-[#00a9e0] text-white"
-                        : "bg-gray-200"
-                    }`}
-                  >
-                    Terima
-                  </button>
-                  <button
-                    onClick={() => handleAction(payment.id, "Tolak")}
-                    className={`px-4 py-2 rounded-lg font-semibold ${
-                      payment.status === "Tolak"
-                        ? "bg-red-500 text-white"
-                        : "bg-gray-200"
-                    }`}
-                  >
-                    Tolak
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 border-b">ID Pembayaran</th>
+                  <th className="py-2 px-4 border-b">Nama Siswa</th>
+                  <th className="py-2 px-4 border-b">Tipe Kelas</th>
+                  <th className="py-2 px-4 border-b">Tipe Pembayaran</th>
+                  <th className="py-2 px-4 border-b">Jumlah</th>
+                  <th className="py-2 px-4 border-b">Status</th>
+                  <th className="py-2 px-4 border-b">Bukti Pembayaran</th>
+                </tr>
+              </thead>
+              <tbody>
+                {getTagihan.map((item) => (
+                  <tr key={item.id_pembayaran}>
+                    <td className="py-2 px-4 border-b text-center">
+                      {item.id_pembayaran}
+                    </td>
+                    <td className="py-2 px-4 border-b">{item.nama_siswa}</td>
+                    <td className="py-2 px-4 border-b text-center">
+                      {item.tipe_kelas}
+                    </td>
+                    <td className="py-2 px-4 border-b text-center">
+                      {item.tipe_pembayaran}
+                    </td>
+                    <td className="py-2 px-4 border-b text-right">
+                      {parseFloat(item.jumlah).toLocaleString("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })}
+                    </td>
+                    <td
+                      className={`py-2 px-4 border-b text-center ${
+                        item.status === "lunas"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {item.status}
+                    </td>
+                    <td className="py-2 px-4 border-b text-center">
+                      {item.link_bukti ? (
+                        <a
+                          href={item.link_bukti}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
+                          Lihat Bukti
+                        </a>
+                      ) : (
+                        "Tidak Ada"
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {/* {error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 border-b">ID Pembayaran</th>
+                  <th className="py-2 px-4 border-b">Nama Siswa</th>
+                  <th className="py-2 px-4 border-b">Tipe Kelas</th>
+                  <th className="py-2 px-4 border-b">Tipe Pembayaran</th>
+                  <th className="py-2 px-4 border-b">Jumlah</th>
+                  <th className="py-2 px-4 border-b">Status</th>
+                  <th className="py-2 px-4 border-b">Bukti Pembayaran</th>
+                </tr>
+              </thead>
+              <tbody>
+                {getTagihan && getTagihan.length > 0 ? (
+                  getTagihan.map((item) => (
+                    <tr key={item.id_pembayaran}>
+                      <td className="py-2 px-4 border-b text-center">
+                        {item.id_pembayaran}
+                      </td>
+                      <td className="py-2 px-4 border-b">{item.nama_siswa}</td>
+                      <td className="py-2 px-4 border-b text-center">
+                        {item.tipe_kelas}
+                      </td>
+                      <td className="py-2 px-4 border-b text-center">
+                        {item.tipe_pembayaran}
+                      </td>
+                      <td className="py-2 px-4 border-b text-right">
+                        {parseFloat(item.jumlah).toLocaleString("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                        })}
+                      </td>
+                      <td
+                        className={`py-2 px-4 border-b text-center ${
+                          item.status === "lunas"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {item.status}
+                      </td>
+                      <td className="py-2 px-4 border-b text-center">
+                        {item.link_bukti ? (
+                          <a
+                            href={item.link_bukti}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 underline"
+                          >
+                            Lihat Bukti
+                          </a>
+                        ) : (
+                          "Tidak Ada"
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center py-4">
+                      Tidak ada data pembayaran.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )} */}
       </div>
     </div>
   );
