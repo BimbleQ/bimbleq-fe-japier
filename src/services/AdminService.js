@@ -171,7 +171,31 @@ export const getPerubahanKelasReguler = async () => {
     throw error;
   }
 };
-
+export const postTambahKelas = async (
+  nama_kelas,
+  tipe,
+  id_matpel,
+  id_pengajar
+) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/createKelas`,
+      {
+        nama_kelas: nama_kelas,
+        tipe: tipe,
+        id_matpel: id_matpel,
+        id_pengajar: id_pengajar,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Gagal simpan kelas:", error);
+    throw error;
+  }
+};
 export const postSimpanPelajaran = async () => {
   try {
     const response = await axios.post(`${API_URL}/createPelajaran`, {
@@ -180,18 +204,6 @@ export const postSimpanPelajaran = async () => {
     return response.data.requests;
   } catch (error) {
     console.error("Gagal simpan pelajaran:", error);
-    throw error;
-  }
-};
-
-export const postTambahKelas = async () => {
-  try {
-    const response = await axios.post(`${API_URL}/createKelas`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Gagal simpan kelas:", error);
     throw error;
   }
 };

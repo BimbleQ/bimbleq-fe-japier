@@ -7,6 +7,7 @@ import {
   getKelas,
   getPengajuanKelasPrivat,
   getPerubahanKelasReguler,
+  postTambahKelas,
 } from "../../services/AdminService";
 
 const KelolaKelas = () => {
@@ -19,89 +20,6 @@ const KelolaKelas = () => {
     pengajar: "",
     tanggal: "",
   });
-
-  const [privateRequests, setPrivateRequests] = useState([
-    {
-      id: 1,
-      namaSiswa: "Siswa A",
-      mataPelajaran: "Matematika",
-      pengajar: "Ibu Ani",
-      jadwalKelas: "Senin, 08:00",
-      catatan: "Perlu perhatian khusus",
-    },
-    {
-      id: 2,
-      namaSiswa: "Siswa B",
-      mataPelajaran: "IPA",
-      pengajar: "Pak Budi",
-      jadwalKelas: "Selasa, 10:00",
-      catatan: "",
-    },
-  ]);
-
-  const [scheduleRequests, setScheduleRequests] = useState([
-    {
-      id: 1,
-      namaSiswa: "Mulyono Hendra",
-      kelasLama: "Kelas Fisika A",
-      waktuBaru: "Kelas B 14:00",
-      alasan: "Ada acara keluarga",
-    },
-    {
-      id: 2,
-      namaSiswa: "Javier Jinan",
-      kelasLama: "Kelas Matematika A",
-      waktuBaru: "Kelas Matematika B 14:00",
-      alasan: "Ada acara keluarga",
-    },
-  ]);
-
-  const [classList, setClassList] = useState([
-    {
-      id: 1,
-      namaKelas: "Matematika 10A",
-      jenisKelas: "Reguler",
-      jumlahSiswa: "25",
-      jadwal: "Senin, 08:00",
-      pengajar: "Ibu Ani",
-    },
-    {
-      id: 2,
-      namaKelas: "Fisika 11B",
-      jenisKelas: "Privat",
-      jumlahSiswa: "5",
-      jadwal: "Rabu, 10:00",
-      pengajar: "Pak Budi",
-    },
-  ]);
-
-  const [actions, setActions] = useState({});
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleAction = (id, status, table) => {
-    setActions((prev) => ({
-      ...prev,
-      [`${table}-${id}`]: status,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Data Formulir:", formData);
-    alert("Kelas berhasil dibuat!");
-  };
-
-  const handleSaveActions = () => {
-    console.log("Tindakan Disimpan:", actions);
-    alert("Tindakan berhasil disimpan!");
-  };
 
   const [jumlahPengajuanPrivat, setJumlahPengajuanPrivat] = useState(0);
   const [jumlahPengajuanReguler, setJumlahPengajuanReguler] = useState(0);
