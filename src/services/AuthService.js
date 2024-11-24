@@ -31,7 +31,7 @@ class AuthService {
       console.error("AuthService logout error:", error.response?.data?.message || error.message);
       throw new Error(error.response?.data?.message || "Logout failed");
     }
-  }
+  };
 
   static async validateSession() {
     try {
@@ -50,7 +50,7 @@ class AuthService {
       console.error("AuthService validateSession error:", error.response?.data?.message || error.message);
       throw new Error(error.response?.data?.message || "Session validation failed");
     }
-  }
+  };
 
   static async isLoggedIn() {
     try {

@@ -112,6 +112,23 @@ export const getPembayaran = async () => {
   }
 };
 
+// siswa
+export const addSiswa = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/addSiswa`, data, {
+      withCredentials: true,
+    });
+
+    return {
+      ...data,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.error("Gagal menambahkan siswa:", error);
+    throw error;
+  }
+};
+
 export const getSiswa = async () => {
   try {
     const response = await axios.get(`${API_URL}/getSiswa`, {
@@ -119,103 +136,77 @@ export const getSiswa = async () => {
     });
     return response.data.siswa;
   } catch (error) {
-    console.error("Gagal mengambil data siswa:", error);
+    console.error("Error mendapatkan data siswa:", error);
     throw error;
   }
 };
 
-export const getPengajar = async () => {
+export const getSiswaById = async (id_siswa) => {
   try {
-    const response = await axios.get(`${API_URL}/getPengajar`, {
+    const response = await axios.get(`${API_URL}/getSiswaById/${id_siswa}`, {
       withCredentials: true,
     });
-    return response.data.pengajar;
+    return response.data.siswa[0]; // Mengembalikan siswa pertama dari response
   } catch (error) {
-    console.error("Gagal mengambil data pengajar:", error);
+    console.error("Gagal mendapatkan data siswa:", error);
     throw error;
   }
 };
 
-export const getKelas = async () => {
+export const updateSiswa = async (id_siswa, updatedData) => {
   try {
-    const response = await axios.get(`${API_URL}/getKelas`, {
-      withCredentials: true,
-    });
-    return response.data;
+    const response = await axios.put(
+      `${API_URL}/updateSiswa/${id_siswa}`,
+      updatedData,
+      { withCredentials: true }
+    );
+    return response.data; // Mengembalikan response dari backend
   } catch (error) {
-    console.error("Gagal mengambil data kelas:", error);
-    throw error;
+    console.error("Gagal memperbarui data siswa:", error);
+    throw error; // Lempar error untuk ditangani di komponen pemanggil
   }
 };
 
-export const getPengajuanKelasPrivat = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/getPengajuanKelasPrivat`, {
-      withCredentials: true,
-    });
-    return response.data.requests;
-  } catch (error) {
-    console.error("Gagal mengambil data kelas privat:", error);
-    throw error;
-  }
-};
+// pelajaran
 
-export const getPerubahanKelasReguler = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/getPengajuanKelasReguler`, {
-      withCredentials: true,
-    });
-    return response.data.requests;
-  } catch (error) {
-    console.error("Gagal mengambil data kelas reguler:", error);
-    throw error;
-  }
-};
-export const postTambahKelas = async (
-  nama_kelas,
-  tipe,
-  id_matpel,
-  id_pengajar
-) => {
+export const simpanPelajaran = async (nama_matpel) => {
   try {
     const response = await axios.post(
-      `${API_URL}/createKelas`,
-      {
-        nama_kelas: nama_kelas,
-        tipe: tipe,
-        id_matpel: id_matpel,
-        id_pengajar: id_pengajar,
-      },
-      {
-        withCredentials: true,
-      }
+      `${API_URL}/createPelajaran`,
+      { nama_matpel }, // Data dikirim sebagai objek
+      { withCredentials: true } // Untuk autentikasi
     );
-    return response.data;
+    console.log("Response:", response);
+    return response.data.message; // Mengembalikan pesan dari response
   } catch (error) {
-    console.error("Gagal simpan kelas:", error);
-    throw error;
+    console.error("Error saving pelajaran:", error);
+    throw error; // Lempar error untuk penanganan di komponen
   }
 };
-export const postSimpanPelajaran = async () => {
+
+export const getPelajaran = async () => {
   try {
-    const response = await axios.post(`${API_URL}/createPelajaran`, {
+    const response = await axios.get(`${API_URL}/pelajaran`, {
       withCredentials: true,
     });
-    return response.data.requests;
+    console.log("Response:", response);
+    return response.data.mataPelajaran;
   } catch (error) {
-    console.error("Gagal simpan pelajaran:", error);
+    console.error("Error fetching pelajaran:", error);
     throw error;
   }
 };
 
-export const removePelajaran = async () => {
+export const deletePelajaran = async (id_matpel) => {
   try {
     const response = await axios.delete(`${API_URL}/removePelajaran`, {
-      withCredentials: true,
+      data: { id_matpel }, // Mengirimkan data sebagai bagian dari request body
+      withCredentials: true, // Untuk autentikasi
     });
-    return response.data.requests;
+    console.log("Response:", response);
+    return response.data.message; // Mengembalikan pesan dari response
   } catch (error) {
-    console.error("Gagal hapus pelajaran:", error);
-    throw error;
+    console.error("Error deleting pelajaran:", error);
+    throw error; // Lempar error untuk ditangani di komponen
   }
 };

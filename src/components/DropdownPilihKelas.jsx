@@ -1,29 +1,7 @@
 import React from "react";
 import Select from "react-select";
 
-const DropdownPilihKelas = () => {
-  // Data kelas (isi ini dengan data dinamis jika diperlukan)
-  const kelasOptions = [
-    {
-      value: "kelas-ipa-a",
-      label: (
-        <div>
-          <span className="block font-bold">KELAS IPA A</span>
-          <span className="text-sm text-gray-600">18:40 Senin, 29 Februari 2024</span>
-        </div>
-      ),
-    },
-    {
-      value: "kelas-ipa-b",
-      label: (
-        <div>
-          <span className="block font-bold">KELAS IPA B</span>
-          <span className="text-sm text-gray-600">18:40 Senin, 29 Februari 2025</span>
-        </div>
-      ),
-    },
-  ];
-
+const DropdownPilihKelas = ({ options, selectedOption, onChange }) => {
   // Custom styles untuk dropdown
   const customStyles = {
     option: (provided) => ({
@@ -40,9 +18,10 @@ const DropdownPilihKelas = () => {
 
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Kelas Tujuan</label>
-      <Select 
-        options={kelasOptions} 
+      <Select
+        options={options} // Data kelas untuk ditampilkan
+        value={selectedOption} // Nilai yang dipilih
+        onChange={onChange} // Fungsi untuk menangani perubahan
         placeholder="Pilih Kelas"
         styles={customStyles}
         className="rounded-lg"

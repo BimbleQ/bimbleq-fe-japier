@@ -22,3 +22,4 @@ src.zip
 *.njsproj
 *.sln
 *.sw?
+package-lock.json

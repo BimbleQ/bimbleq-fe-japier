@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { getJumlahSiswa, getSiswa } from "../../services/AdminService";
 import { Link } from "react-router-dom";
+import { addSiswa } from "../../services/AdminService";
+import { getSiswa } from "../../services/AdminService";
 
 const KelolaSiswa = () => {
-  const [students, setStudents] = useState([
-    { id: 1, namaSiswa: "John Doe", kontak: "099038902", alamat: "Jalan A" },
-    { id: 2, namaSiswa: "Jane Smith", kontak: "0881234567", alamat: "Jalan B" },
-  ]);
-
+  const [jumlahSiswa, setJumlahSiswa] = useState(0);
+  const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
@@ -15,7 +14,7 @@ const KelolaSiswa = () => {
   };
 
   const filteredStudents = students.filter((student) =>
-    student.namaSiswa.toLowerCase().includes(searchTerm.toLowerCase())
+    student.nama?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   const [newStudent, setNewStudent] = useState({
@@ -26,12 +25,15 @@ const KelolaSiswa = () => {
     passwordSiswa: "",
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewStudent((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddStudent = () => {
+  const handleAddStudent = async () => {
     if (
       newStudent.namaSiswa &&
       newStudent.kontak &&
@@ -39,60 +41,71 @@ const KelolaSiswa = () => {
       newStudent.usernameSiswa &&
       newStudent.passwordSiswa
     ) {
-      setStudents((prev) => [...prev, { ...newStudent, id: prev.length + 1 }]);
-      setNewStudent({
-        namaSiswa: "",
-        kontak: "",
-        alamat: "",
-        usernameSiswa: "",
-        passwordSiswa: "",
-      });
+      try {
+        const requestData = {
+          username: newStudent.usernameSiswa,
+          password: newStudent.passwordSiswa,
+          nama: newStudent.namaSiswa,
+          kontak: newStudent.kontak,
+          alamat: newStudent.alamat,
+        };
+
+        const response = await addSiswa(requestData); // Memanggil API untuk menambahkan siswa baru
+
+        setStudents((prev) => [
+          {
+            id_siswa: response.id_siswa,
+            nama: response.nama,
+            kontak: response.kontak,
+            alamat: response.alamat,
+          },
+          ...prev,
+        ]);
+
+        setNewStudent({
+          namaSiswa: "",
+          kontak: "",
+          alamat: "",
+          usernameSiswa: "",
+          passwordSiswa: "",
+        });
+
+        setModalContent(`Siswa ${response.nama} berhasil ditambahkan!`);
+        setIsModalOpen(true);
+      } catch (error) {
+        console.error("Gagal menambahkan siswa:", error);
+        alert("Gagal menambahkan siswa. Silakan coba lagi.");
+      }
     } else {
       alert("Mohon lengkapi semua data!");
     }
   };
 
-  const [jumlahSiswa, setJumlahSiswa] = useState(0);
-  const [dataSiswa, setDataSiswa] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
     const fetchSiswa = async () => {
+      try {
+        const siswa = await getSiswa();
+        setStudents(siswa);
+      } catch (error) {
+        console.error("Error mendapatkan data siswa:", error);
+      }
+    };
+
+    fetchSiswa();
+  }, []);
+
+  useEffect(() => {
+    const fetchJumlahSiswa = async () => {
       try {
         const data = await getJumlahSiswa();
         setJumlahSiswa(data.jumlah_siswa);
       } catch (error) {
-        console.error(
-          "Terjadi kesalahan saat mengambil data jumlah kelas aktif:",
-          error
-        );
+        console.error("Terjadi kesalahan saat mengambil jumlah siswa:", error);
       }
     };
-    fetchSiswa();
+
+    fetchJumlahSiswa();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const siswa = await getSiswa(); // Panggil service
-      setDataSiswa(siswa); // Simpan data ke state
-      setIsLoading(false); // Set loading ke false
-    } catch (err) {
-      setError(err); // Tangkap error
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData(); // Fetch data saat komponen pertama kali di-load
-  }, []);
-
-  if (isLoading) {
-    return <p>Loading data...</p>; // Placeholder saat loading
-  }
-
-  if (error) {
-    return <p>Terjadi kesalahan: {error.message}</p>; // Tampilkan error jika ada
-  }
 
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
@@ -177,39 +190,6 @@ const KelolaSiswa = () => {
           />
         </div>
         <table className="table-auto w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-300 px-4 py-2">Nama</th>
-              <th className="border border-gray-300 px-4 py-2">Kontak</th>
-              <th className="border border-gray-300 px-4 py-2">Alamat</th>
-              <th className="border border-gray-300 px-4 py-2">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataSiswa.map((siswa) => (
-              <tr key={siswa.id_siswa}>
-                <td className="border border-gray-300 px-4 py-2">
-                  {siswa.nama}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {siswa.kontak}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {siswa.alamat}
-                </td>
-                <td className="p-3 border border-gray-300">
-                  <Link
-                    to={`/kelola-siswa/edit/${siswa.id}`}
-                    className="text-[#00a9e0] hover:underline"
-                  >
-                    Edit
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {/* <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">
@@ -228,15 +208,13 @@ const KelolaSiswa = () => {
           </thead>
           <tbody>
             {filteredStudents.map((student) => (
-              <tr key={student.id}>
-                <td className="p-3 border border-gray-300">
-                  {student.namaSiswa}
-                </td>
+              <tr key={student.id_siswa}>
+                <td className="p-3 border border-gray-300">{student.nama}</td>
                 <td className="p-3 border border-gray-300">{student.kontak}</td>
                 <td className="p-3 border border-gray-300">{student.alamat}</td>
                 <td className="p-3 border border-gray-300">
                   <Link
-                    to={`/kelola-siswa/edit/${student.id}`}
+                    to={`/kelola-siswa/edit/${student.id_siswa}`}
                     className="text-[#00a9e0] hover:underline"
                   >
                     Edit
@@ -245,8 +223,23 @@ const KelolaSiswa = () => {
               </tr>
             ))}
           </tbody>
-        </table> */}
+        </table>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-4">Notifikasi</h2>
+            <p>{modalContent}</p>
+            <button
+              className="mt-4 w-full bg-[#00a9e0] text-white rounded-lg p-2 font-semibold hover:bg-[#007ab8] transition"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

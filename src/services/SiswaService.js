@@ -63,6 +63,80 @@ const SiswaService = {
     }
   },
 
+  getMataPelajaran: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/pelajaran`, { withCredentials: true });
+      return response.data.mataPelajaran;
+    } catch (error) {
+      console.error("Error fetching mata pelajaran:", error);
+      throw error;
+    }
+  },
+
+  // Fetch pengajar berdasarkan mata pelajaran
+  getPengajarByMatpel: async (idMatpel) => {
+    try {
+      const response = await axios.get(`${API_URL}/pengajarMatpel?id_matpel=${idMatpel}`, {
+        withCredentials: true,
+      });
+      return response.data.pengajar;
+    } catch (error) {
+      console.error("Error fetching pengajar:", error);
+      throw error;
+    }
+  },
+
+  // Submit pengajuan kelas privat
+  submitPrivateClassRequest: async (payload) => {
+    try {
+      const response = await axios.post(`${API_URL}/crePrivateClass`, payload, {
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error submitting private class request:", error);
+      throw error;
+    }
+  },
+
+    // Fetch kelas awal
+    getKelasAwal: async () => {
+      try {
+        const response = await axios.get(`${API_URL}/kelasAwal`, { withCredentials: true });
+        return response.data.kelasAwal;
+      } catch (error) {
+        console.error("Error fetching kelas awal:", error);
+        throw error;
+      }
+    },
+  
+    // Fetch kelas tujuan berdasarkan ID pertemuan lama
+    getKelasTujuan: async (idPertemuanLama) => {
+      try {
+        const response = await axios.get(`${API_URL}/kelasTujuan_refID`, {
+          params: { id_pertemuan_lama: idPertemuanLama },
+          withCredentials: true,
+        });
+        return response.data.kelasTujuan;
+      } catch (error) {
+        console.error("Error fetching kelas tujuan:", error);
+        throw error;
+      }
+    },
+  
+    // Submit permintaan perubahan kelas reguler
+    postReqReg: async (payload) => {
+      try {
+        const response = await axios.post(`${API_URL}/postReqReg`, payload, {
+          withCredentials: true, // Sertakan cookie/session
+        });
+        return response.data; // Kembalikan data respons
+      } catch (error) {
+        console.error("Error submitting regular class request:", error);
+        throw error;
+      }
+    },
+  
 };
 
 export default SiswaService;
