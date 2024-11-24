@@ -22,19 +22,46 @@ const JadwalDashboardSiswa = () => {
     waktu_kelas: "",
     note: "",
   });
-
   const [isLoadingMatpel, setIsLoadingMatpel] = useState(true);
   const [isLoadingPengajar, setIsLoadingPengajar] = useState(false);
+  const [kelasAwalOptions, setKelasAwalOptions] = useState([]);
+  const [kelasTujuanOptions, setKelasTujuanOptions] = useState([]);
+  const [selectedKelasAwal, setSelectedKelasAwal] = useState(null);
+  const [selectedKelasTujuan, setSelectedKelasTujuan] = useState(null);
+  const [note, setNote] = useState("");
 
   // Fungsi untuk menampilkan modal
-  const handleSubmit = (type) => {
-    if (type === "kelas") {
-      setModalMessage("Pengajuan kelas berhasil dikirim!");
-    } else if (type === "permintaan") {
-      setModalMessage("Permintaan perubahan jadwal berhasil dikirim!");
+  const handleSubmit = async () => {
+    try {
+      const session = await AuthService.validateSession();
+      if (!session || !session.user || !session.user.id_user) {
+        alert("Gagal mengirim permintaan: Data pengguna tidak ditemukan.");
+        return;
+      }
+  
+      if (!selectedKelasAwal || !selectedKelasTujuan) {
+        alert("Silakan pilih kelas awal dan kelas tujuan!");
+        return;
+      }
+  
+      const payload = {
+        id_siswa: session.user.id_user,
+        id_pertemuan_lama: selectedKelasAwal.value,
+        id_pertemuan_baru: selectedKelasTujuan.value,
+        note,
+      };
+  
+      console.log("Payload yang dikirim:", payload);
+  
+      const response = await SiswaService.postReqReg(payload);
+      console.log("Response dari API:", response);
+      alert("Permintaan perubahan jadwal berhasil dikirim!");
+    } catch (error) {
+      console.error("Error submitting request:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Terjadi kesalahan saat mengirim permintaan.");
     }
-    setIsModalOpen(true);
   };
+  
 
   const handleSubmitPrivateClass = async () => {
     if (!idSiswa) {
@@ -71,7 +98,38 @@ const JadwalDashboardSiswa = () => {
     setModalMessage("");
   };
 
-  
+  const handleMatpelChange = (event) => {
+    const idMatpel = event.target.value;
+    setSelectedMatpel(idMatpel);
+    setPengajar([]); // Reset pengajar saat mata pelajaran berubah
+    setFormData({ ...formData, id_pengajar: "" }); // Reset pengajar di formData
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleKelasAwalChange = async (selectedOption) => {
+    setSelectedKelasAwal(selectedOption);
+
+    try {
+      const data = await SiswaService.getKelasTujuan(selectedOption.value);
+      const options = data.map((kelas) => ({
+        value: kelas.id_pertemuan,
+        label: (
+          <div>
+            <span className="block font-bold">{kelas.nama_kelas}</span>
+            <span className="text-sm text-gray-600">{kelas.waktu_kelas}</span>
+          </div>
+        ),
+      }));
+      setKelasTujuanOptions(options);
+    } catch (error) {
+      console.error("Error fetching kelas tujuan:", error);
+    }
+  };
+
   // Atur overflow body saat modal terbuka
   useEffect(() => {
     if (isModalOpen) {
@@ -163,19 +221,51 @@ const JadwalDashboardSiswa = () => {
     fetchPengajar();
   }, [selectedMatpel]);
 
-  const handleMatpelChange = (event) => {
-    const idMatpel = event.target.value;
-    setSelectedMatpel(idMatpel);
-    setPengajar([]); // Reset pengajar saat mata pelajaran berubah
-    setFormData({ ...formData, id_pengajar: "" }); // Reset pengajar di formData
+// Fetch data kelas awal
+useEffect(() => {
+  const fetchKelasAwal = async () => {
+    try {
+      const data = await SiswaService.getKelasAwal();
+      const options = data.map((item) => ({
+        value: item.id_pertemuan,
+        label: (
+          <div>
+            <span className="block font-bold">{item.nama_kelas}</span>
+            <span className="text-sm text-gray-600">{item.waktu_kelas}</span>
+          </div>
+        ),
+      }));
+      setKelasAwalOptions(options);
+    } catch (error) {
+      console.error("Error fetching kelas awal:", error);
+    }
   };
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+  fetchKelasAwal();
+}, []);
+
+useEffect(() => {
+  const fetchKelasTujuan = async () => {
+    if (!selectedKelasAwal) return;
+    try {
+      const data = await SiswaService.getKelasTujuan(selectedKelasAwal.value);
+      const options = data.map((item) => ({
+        value: item.id_pertemuan,
+        label: (
+          <div>
+            <span className="block font-bold">{item.nama_kelas}</span>
+            <span className="text-sm text-gray-600">{item.waktu_kelas}</span>
+          </div>
+        ),
+      }));
+      setKelasTujuanOptions(options);
+    } catch (error) {
+      console.error("Error fetching kelas tujuan:", error);
+    }
   };
 
-  
+  fetchKelasTujuan();
+}, [selectedKelasAwal]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen space-y-6">
@@ -185,7 +275,6 @@ const JadwalDashboardSiswa = () => {
       </h1>
 
       {/* Status Pengajuan Kelas */}
-      {/* Status Pengajuan */}
       <section>
         <h2 className="text-xl font-semibold text-[#212121] mb-4">Pengajuan Kelas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -353,37 +442,51 @@ const JadwalDashboardSiswa = () => {
       </form>
     </div>
 
-          {/* Form Permintaan Perubahan Jadwal Kelas */}
-          <div className="p-4 bg-white shadow-md rounded-lg">
-            <h3 className="text-[#00a9e0] font-bold mb-4">Form Permintaan Perubahan Jadwal Kelas</h3>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Pilih Kelas Awal</label>
-                <select className="w-full p-2 border rounded-lg">
-                  <option>Pilih Kelas Awal</option>
-                </select>
-              </div>
-              <div>
-                <DropdownPilihKelas />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Jadwal Baru</label>
-                <input type="date" className="w-full p-2 border rounded-lg" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Alasan</label>
-                <textarea className="w-full p-2 border rounded-lg" rows="3"></textarea>
-              </div>
-              <button
-                type="button"
-                className="w-full p-2 bg-[#00a9e0] text-white font-bold rounded-lg hover:bg-[#007bb5] transition duration-200"
-                onClick={() => handleSubmit("permintaan")}
-              >
-                Ajukan Permintaan
-              </button>
-            </form>
-          </div>
-        </div>
+      {/* Form Permintaan Perubahan Jadwal Kelas */}
+        <div className="p-4 bg-white shadow-md rounded-lg">
+      <h3 className="text-[#00a9e0] font-bold mb-4">Form Permintaan Perubahan Jadwal Kelas</h3>
+      <form className="space-y-4">
+  {/* Dropdown Pilih Kelas Awal */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Pilih Kelas Awal</label>
+    <DropdownPilihKelas
+      options={kelasAwalOptions}
+      selectedOption={selectedKelasAwal}
+      onChange={setSelectedKelasAwal}
+    />
+  </div>
+
+  {/* Dropdown Pilih Kelas Tujuan */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Pilih Kelas Tujuan</label>
+    <DropdownPilihKelas
+      options={kelasTujuanOptions}
+      selectedOption={selectedKelasTujuan}
+      onChange={setSelectedKelasTujuan}
+    />
+  </div>
+
+  {/* Note */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700">Catatan</label>
+    <textarea
+      className="w-full p-2 border rounded-lg"
+      rows="3"
+      value={note}
+      onChange={(e) => setNote(e.target.value)}
+    ></textarea>
+  </div>
+
+  <button
+    type="button"
+    className="w-full p-2 bg-[#00a9e0] text-white font-bold rounded-lg hover:bg-[#007bb5] transition duration-200"
+    onClick={handleSubmit}
+  >
+    Ajukan Permintaan
+  </button>
+</form>
+    </div>
+      </div>
       </section>
 
       {/* Jadwal Kelas Mingguan

@@ -99,6 +99,44 @@ const SiswaService = {
     }
   },
 
+    // Fetch kelas awal
+    getKelasAwal: async () => {
+      try {
+        const response = await axios.get(`${API_URL}/kelasAwal`, { withCredentials: true });
+        return response.data.kelasAwal;
+      } catch (error) {
+        console.error("Error fetching kelas awal:", error);
+        throw error;
+      }
+    },
+  
+    // Fetch kelas tujuan berdasarkan ID pertemuan lama
+    getKelasTujuan: async (idPertemuanLama) => {
+      try {
+        const response = await axios.get(`${API_URL}/kelasTujuan_refID`, {
+          params: { id_pertemuan_lama: idPertemuanLama },
+          withCredentials: true,
+        });
+        return response.data.kelasTujuan;
+      } catch (error) {
+        console.error("Error fetching kelas tujuan:", error);
+        throw error;
+      }
+    },
+  
+    // Submit permintaan perubahan kelas reguler
+    postReqReg: async (payload) => {
+      try {
+        const response = await axios.post(`${API_URL}/postReqReg`, payload, {
+          withCredentials: true, // Sertakan cookie/session
+        });
+        return response.data; // Kembalikan data respons
+      } catch (error) {
+        console.error("Error submitting regular class request:", error);
+        throw error;
+      }
+    },
+  
 };
 
 export default SiswaService;

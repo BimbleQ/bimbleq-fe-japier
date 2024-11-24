@@ -61,7 +61,7 @@ const App = () => {
   // Redirect ke dashboard sesuai role
   const getDefaultRoute = () => {
     if (role === "admin") return <Navigate to="/admin" />;
-    if (role === "guru") return <Navigate to="/guru" />;
+    if (role === "pengajar") return <Navigate to="/guru" />;
     if (role === "siswa") return <Navigate to="/siswa" />;
     return null;
   };
@@ -95,7 +95,7 @@ const App = () => {
                   <Route path="/kelola-pelajaran" element={<KelolaPelajaran />} />
                 </>
               )}
-              {role === "guru" && (
+              {role === "pengajar" && (
                 <>
                   <Route path="/guru" element={<DashboardGuru />} />
                   <Route path="/jadwal-kelas" element={<JadwalKelas />} />
