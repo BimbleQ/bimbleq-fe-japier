@@ -1,35 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getJumlahPengajar } from "../../services/AdminService";
+import { getMataPelajaran } from "../../services/AdminService";
+import { getPengajar } from "../../services/AdminService";
+import { tambahPengajar } from "../../services/AdminService";
 
 const KelolaPengajar = () => {
   const navigate = useNavigate();
-
+  
   const [formData, setFormData] = useState({
     namaPengajar: "",
     spesialisasi: "",
     kontak: "",
-    usernamePengajar: "",
-    passwordPengajar: "",
+    username: "",
+    password: ""
   });
-
   const [searchTerm, setSearchTerm] = useState("");
+  const [mataPelajaranList, setMataPelajaranList] = useState([]); 
+  const [pengajarList, setPengajarList] = useState([]);
 
-  const [pengajarList, setPengajarList] = useState([
-    {
-      id: 1,
-      namaPengajar: "John Doe",
-      kontak: "099038902",
-      spesialisasi: "Bahasa Inggris",
-    },
-    {
-      id: 2,
-      namaPengajar: "Jane Smith",
-      kontak: "0881234567",
-      spesialisasi: "Matematika",
-    },
-  ]);
+  useEffect(() => {
+    const fetchPelajaran = async () => {
+      try {
+        const data = await getMataPelajaran();
+        const matpel = data.map(pelajaran => {
+          return {
+            id:pelajaran.id_matpel,
+            nama:pelajaran.nama_matpel
+          };
+        });
+        setMataPelajaranList(matpel);
+        console.log('matpel', matpel);
+      } catch (error) {
+        console.error("Failed to fetch pertemuan:", error);
+      }
+    };
+   
+    fetchPengajar();
+    fetchPelajaran();
+  }, []);
 
+  const fetchPengajar = async () => {
+    try {
+      const data = await getPengajar();
+      const pengajar = data.map(pengajar => {
+        return {
+          id: pengajar.id_pengajar,
+          namaPengajar: pengajar.nama,
+          kontak: pengajar.kontak,
+          spesialisasi: pengajar.spesialisasi,
+          
+        };
+      });
+      setPengajarList(pengajar);
+      
+    } catch (error) {
+      console.error("Failed to fetch pertemuan:", error);
+    }
+  };
+    
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -38,26 +66,32 @@ const KelolaPengajar = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData);
+    
     const newPengajar = {
       id: pengajarList.length + 1,
       namaPengajar: formData.namaPengajar,
       kontak: formData.kontak,
       spesialisasi: formData.spesialisasi,
-      usernamePengajar: formData.usernamePengajar,
-      passwordPengajar: formData.passwordPengajar,
     };
-
-    setPengajarList((prevList) => [...prevList, newPengajar]);
-
+    try{
+      const data = await tambahPengajar(formData.username, formData.password,formData.namaPengajar, formData.kontak, formData.spesialisasi)
+    }catch(err) {
+      console.log("gagal daftar", err);
+      
+    }finally{
+      fetchPengajar()
+    }
+    
+    
     setFormData({
       namaPengajar: "",
       spesialisasi: "",
       kontak: "",
-      usernamePengajar: "",
-      passwordPengajar: "",
+      username: "",
+      password: ""
     });
   };
 
@@ -71,23 +105,6 @@ const KelolaPengajar = () => {
       pengajar.spesialisasi.toLowerCase().includes(searchTerm)
   );
 
-  const [jumlahPengajar, setJumlahPengajar] = useState(0);
-
-  useEffect(() => {
-    const fetchPengajar = async () => {
-      try {
-        const data = await getJumlahPengajar();
-        setJumlahPengajar(data.jumlah_pengajar);
-      } catch (error) {
-        console.error(
-          "Terjadi kesalahan saat mengambil data jumlah kelas aktif:",
-          error
-        );
-      }
-    };
-    fetchPengajar();
-  }, []);
-
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
       {/* Breadcrumb */}
@@ -100,21 +117,19 @@ const KelolaPengajar = () => {
         {/* Total Pengajar */}
         <div className="bg-white p-6 rounded-lg shadow text-center">
           <h3 className="text-[#00a9e0] font-bold text-lg">Total Pengajar</h3>
-          <p className="text-[#00a9e0] text-4xl font-bold">{jumlahPengajar}</p>
+          <p className="text-[#00a9e0] text-4xl font-bold">{pengajarList.length}</p>
         </div>
 
         {/* Form Tambah Pengajar Baru */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">
-            Form Tambah Pengajar Baru
-          </h3>
+          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">Form Tambah Pengajar Baru</h3>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input
               type="text"
               name="namaPengajar"
               placeholder="Nama Pengajar"
               value={formData.namaPengajar}
-              onChange={handleInputChange}
+              onChange={handleInputChange} 
               className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
@@ -127,11 +142,14 @@ const KelolaPengajar = () => {
               <option value="" disabled>
                 Spesialisasi
               </option>
-              <option value="Matematika">Matematika</option>
-              <option value="IPA">IPA</option>
-              <option value="Bahasa Inggris">Bahasa Inggris</option>
-            </select>
 
+              {    
+            mataPelajaranList.map((mataPelajaran) => (
+             <option value={mataPelajaran.id}>
+                {mataPelajaran.nama}
+             </option>
+                ))}
+            </select>
             <input
               type="text"
               name="kontak"
@@ -140,21 +158,20 @@ const KelolaPengajar = () => {
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-
             <input
               type="text"
-              name="usernamePengajar"
+              name="username"
               placeholder="Username Pengajar"
-              value={formData.usernamePengajar}
+              value={formData.username}
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <input
               type="text"
-              name="passwordPengajar"
+              name="password"
               placeholder="Password Pengajar"
-              value={formData.passwordPengajar}
+              value={formData.password}
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -184,38 +201,22 @@ const KelolaPengajar = () => {
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Nama Pengajar
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Kontak
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Spesialisasi
-              </th>
-              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
-                Aksi
-              </th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Nama Pengajar</th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Kontak</th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Spesialisasi</th>
+              <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {filteredPengajarList.length > 0 ? (
               filteredPengajarList.map((pengajar) => (
                 <tr key={pengajar.id}>
-                  <td className="p-3 border border-gray-300">
-                    {pengajar.namaPengajar}
-                  </td>
-                  <td className="p-3 border border-gray-300">
-                    {pengajar.kontak}
-                  </td>
-                  <td className="p-3 border border-gray-300">
-                    {pengajar.spesialisasi}
-                  </td>
+                  <td className="p-3 border border-gray-300">{pengajar.namaPengajar}</td>
+                  <td className="p-3 border border-gray-300">{pengajar.kontak}</td>
+                  <td className="p-3 border border-gray-300">{pengajar.spesialisasi}</td>
                   <td className="p-3 border border-gray-300">
                     <button
-                      onClick={() =>
-                        navigate(`/kelola-pengajar/edit/${pengajar.id}`)
-                      }
+                      onClick={() => navigate(`/kelola-pengajar/edit/${pengajar.id}`)}
                       className="text-[#00a9e0] hover:underline"
                     >
                       Edit
