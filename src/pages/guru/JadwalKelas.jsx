@@ -1,13 +1,13 @@
 import React from "react";
-import FullCalendar from "@fullcalendar/react"; // Import FullCalendar
-import dayGridPlugin from "@fullcalendar/daygrid"; // Plugin untuk tampilan kalender
-import interactionPlugin from "@fullcalendar/interaction"; // Plugin untuk interaksi
+import FullCalendar from "@fullcalendar/react"; 
+import dayGridPlugin from "@fullcalendar/daygrid"; 
+import interactionPlugin from "@fullcalendar/interaction"; 
 
 
 const JadwalKelas = () => {
   const events = [
-    { title: "Kelas Matematika", date: "2024-11-20" },
-    { title: "Kelas Bahasa Inggris", date: "2024-11-22" },
+    { title: "Kelas Matematika", date: "2024-11-26" },
+    { title: "Kelas Bahasa Inggris", date: "2024-11-29" },
   ];
 
   return (
@@ -37,9 +37,29 @@ const JadwalKelas = () => {
             <tr>
               <td className="border border-gray-300 p-2">Senin</td>
               <td className="border border-gray-300 p-2">20 Nov</td>
-              <td className="border border-gray-300 p-2">08:00</td>
+              <td className="border border-gray-300 p-2">18:00</td>
+              <td className="border border-gray-300 p-2">Kelas Reguler</td>
+              <td className="border border-gray-300 p-2">Fisika</td>
+              <td className="border border-gray-300 p-2 text-center">
+                <button className="bg-[#00a9e0] text-white px-4 py-2 rounded">Detail</button>
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-300 p-2">Selasa</td>
+              <td className="border border-gray-300 p-2">26 Nov</td>
+              <td className="border border-gray-300 p-2">16:00</td>
               <td className="border border-gray-300 p-2">Kelas Reguler</td>
               <td className="border border-gray-300 p-2">Matematika</td>
+              <td className="border border-gray-300 p-2 text-center">
+                <button className="bg-[#00a9e0] text-white px-4 py-2 rounded">Detail</button>
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-gray-300 p-2">Jumat</td>
+              <td className="border border-gray-300 p-2">29 Nov</td>
+              <td className="border border-gray-300 p-2">16:00</td>
+              <td className="border border-gray-300 p-2">Kelas Reguler</td>
+              <td className="border border-gray-300 p-2">Bahasa Inggris</td>
               <td className="border border-gray-300 p-2 text-center">
                 <button className="bg-[#00a9e0] text-white px-4 py-2 rounded">Detail</button>
               </td>
@@ -71,10 +91,10 @@ const JadwalKelas = () => {
           <h3 className="text-[#212121] font-semibold">Ringkasan Mingguan</h3>
           <div className="flex flex-col gap-4">
             <div className="bg-[#00a9e0] text-white rounded-lg p-4 text-center m-4">
-              Total Kelas Minggu Ini: 4
+              Total Kelas Minggu Ini : 2
             </div>
             <div className="bg-[#ff8c00] text-white rounded-lg p-4 text-center m-4">
-              Kelas Privat: 2
+              Kelas Privat : 0
             </div>
           </div>
         </div>

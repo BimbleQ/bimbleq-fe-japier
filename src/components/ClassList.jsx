@@ -2,10 +2,10 @@ import ClassCard from "./ClassCard";
 
 const ClassList = () => {
   const classes = [
-    { subject: "[Nama Mata Pelajaran]", studentCount: "30", className: "12N", time: "08:00" },
-    { subject: "[Nama Mata Pelajaran]", studentCount: "25", className: "11I", time: "10:00" },
-    { subject: "[Nama Mata Pelajaran]", studentCount: "28", className: "10G", time: "12:00" },
-    { subject: "[Nama Mata Pelajaran]", studentCount: "20", className: "11G", time: "14:00" },
+    { subject: "Matematika", studentCount: "30", className: "12N", time: "16:00" },
+    { subject: "Bahasa Inggris", studentCount: "30", className: "11I", time: "16:00" },
+    { subject: "Matematika", studentCount: "30", className: "10G", time: "16:00" },
+    { subject: "Bahasa Inggris", studentCount: "30", className: "11G", time: "16:00" },
   ];
 
   return (

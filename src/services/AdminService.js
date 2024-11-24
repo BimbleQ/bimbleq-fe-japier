@@ -212,3 +212,51 @@ export const deletePelajaran = async (id_matpel) => {
     throw error; // Lempar error untuk ditangani di komponen
   }
 };
+
+// pengajar
+export const getPengajarById = async (id_pengajar) => {
+  try {
+    const response = await axios.get(`${API_URL}/getPengajarById/${id_pengajar}`, {
+      withCredentials: true, // Mengirim kredensial jika diperlukan
+    });
+    console.log("Response:", response);
+    return response.data.pengajar; // Mengembalikan data pengajar
+  } catch (error) {
+    console.error("Error fetching pengajar by ID:", error);
+    throw error; // Lempar error untuk ditangani di komponen pemanggil
+  }
+};
+
+export const getPengajar = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/getPengajar`, {
+      withCredentials: true, // Mengirim kredensial jika diperlukan
+    });
+    console.log("Response:", response);
+    return response.data.pengajar; // Mengembalikan daftar pengajar
+  } catch (error) {
+    console.error("Error fetching pengajar:", error);
+    throw error; // Lempar error untuk ditangani di komponen pemanggil
+  }
+};
+
+export const tambahPengajar = async (username, password, nama, kontak, id_matpel) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/addPengajar`,
+      {
+        username, // Menggunakan shorthand untuk properti objek
+        password,
+        nama,
+        kontak,
+        id_matpel,
+      },
+      { withCredentials: true } // Sertakan kredensial jika diperlukan
+    );
+    console.log("Response:", response);
+    return response.data.message; // Mengembalikan pesan sukses dari backend
+  } catch (error) {
+    console.error("Error menambahkan pengajar:", error);
+    throw error; // Lempar error untuk ditangani di komponen pemanggil
+  }
+};
