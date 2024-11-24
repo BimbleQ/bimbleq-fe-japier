@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getJumlahSiswa } from "../../services/AdminService";
+import { getJumlahSiswa, getSiswa } from "../../services/AdminService";
 import { Link } from "react-router-dom";
 
 const KelolaSiswa = () => {
@@ -53,6 +53,9 @@ const KelolaSiswa = () => {
   };
 
   const [jumlahSiswa, setJumlahSiswa] = useState(0);
+  const [dataSiswa, setDataSiswa] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSiswa = async () => {
@@ -68,6 +71,28 @@ const KelolaSiswa = () => {
     };
     fetchSiswa();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const siswa = await getSiswa(); // Panggil service
+      setDataSiswa(siswa); // Simpan data ke state
+      setIsLoading(false); // Set loading ke false
+    } catch (err) {
+      setError(err); // Tangkap error
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData(); // Fetch data saat komponen pertama kali di-load
+  }, []);
+
+  if (isLoading) {
+    return <p>Loading data...</p>; // Placeholder saat loading
+  }
+
+  if (error) {
+    return <p>Terjadi kesalahan: {error.message}</p>; // Tampilkan error jika ada
+  }
 
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
@@ -152,6 +177,39 @@ const KelolaSiswa = () => {
           />
         </div>
         <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2">Nama</th>
+              <th className="border border-gray-300 px-4 py-2">Kontak</th>
+              <th className="border border-gray-300 px-4 py-2">Alamat</th>
+              <th className="border border-gray-300 px-4 py-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataSiswa.map((siswa) => (
+              <tr key={siswa.id_siswa}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {siswa.nama}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {siswa.kontak}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {siswa.alamat}
+                </td>
+                <td className="p-3 border border-gray-300">
+                  <Link
+                    to={`/kelola-siswa/edit/${siswa.id}`}
+                    className="text-[#00a9e0] hover:underline"
+                  >
+                    Edit
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {/* <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-3 text-left text-gray-600 border font-semibold border-gray-300">
@@ -187,7 +245,7 @@ const KelolaSiswa = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
       </div>
     </div>
   );

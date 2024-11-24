@@ -4,6 +4,9 @@ import {
   getJumlahKelasAktif,
   getJumlahPengajuanPrivat,
   getJumlahPengajuanReguler,
+  getKelas,
+  getPengajuanKelasPrivat,
+  getPerubahanKelasReguler,
 } from "../../services/AdminService";
 
 const KelolaKelas = () => {
@@ -103,6 +106,12 @@ const KelolaKelas = () => {
   const [jumlahPengajuanPrivat, setJumlahPengajuanPrivat] = useState(0);
   const [jumlahPengajuanReguler, setJumlahPengajuanReguler] = useState(0);
   const [jumlahKelasAktif, setJumlahKelasAktif] = useState(0);
+  const [dataKelas, setDataKelas] = useState([]);
+  const [pengajuanKelasPrivat, setPengajuanKelasPrivat] = useState([]);
+  const [perubahanKelasReguler, setPerubahanKelasReguler] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Ambil data jumlah kelas aktif dari API
@@ -124,6 +133,51 @@ const KelolaKelas = () => {
 
     fetchRingkasan();
   }, []);
+
+  const fetchDaftarKelas = async () => {
+    try {
+      const kelas = await getKelas(); // Panggil service
+      setDataKelas(kelas); // Simpan data ke state
+      setIsLoading(false); // Selesai loading
+    } catch (err) {
+      setError(err); // Tangkap error
+      setIsLoading(false);
+    }
+  };
+  const fetchKelasPrivat = async () => {
+    try {
+      const kelasPrivat = await getPengajuanKelasPrivat(); // Panggil service
+      setPengajuanKelasPrivat(kelasPrivat); // Simpan data ke state
+      setIsLoading(false); // Selesai loading
+    } catch (err) {
+      setError(err); // Tangkap error
+      setIsLoading(false);
+    }
+  };
+  const fetchKelasReguler = async () => {
+    try {
+      const kelasReguler = await getPerubahanKelasReguler(); // Panggil service
+      setPerubahanKelasReguler(kelasReguler); // Simpan data ke state
+      setIsLoading(false); // Selesai loading
+    } catch (err) {
+      setError(err); // Tangkap error
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDaftarKelas();
+    fetchKelasPrivat(); // Fetch data saat komponen pertama kali di-load
+    fetchKelasReguler(); // Fetch data saat komponen pertama kali di-load
+  }, []);
+
+  if (isLoading) {
+    return <p>Loading data...</p>; // Placeholder saat loading
+  }
+
+  if (error) {
+    return <p>Terjadi kesalahan: {error.message}</p>; // Tampilkan error jika ada
+  }
 
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
@@ -240,7 +294,7 @@ const KelolaKelas = () => {
       {/* Tabel Daftar Kelas */}
       <div className="mb-6 bg-white p-6 rounded-lg shadow">
         <h3 className="text-[#212121] font-bold text-lg mb-4">Daftar Kelas</h3>
-        <table className="table-auto w-full border-collapse border border-gray-300">
+        {/* <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
@@ -288,6 +342,48 @@ const KelolaKelas = () => {
               </tr>
             ))}
           </tbody>
+        </table> */}
+        <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2">Nama Kelas</th>
+              <th className="border border-gray-300 px-4 py-2">Jenis Kelas</th>
+              <th className="border border-gray-300 px-4 py-2">Jumlah Siswa</th>
+
+              <th className="border border-gray-300 px-4 py-2">Jadwal</th>
+              <th className="border border-gray-300 px-4 py-2">Pengajar</th>
+              <th className="border border-gray-300 px-4 py-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataKelas.map((kelas, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelas.nama_kelas}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelas.tipe}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelas.jumlah_siswa}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {new Date(kelas.jadwal_default).toLocaleString()}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelas.nama_pengajar}
+                </td>
+                <td className="p-3 border border-gray-300">
+                  <button
+                    onClick={() => navigate(`/kelola-kelas/edit/${kelas.id}`)}
+                    className="text-[#00a9e0] hover:underline"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 
@@ -296,7 +392,7 @@ const KelolaKelas = () => {
         <h3 className="text-[#212121] font-bold text-lg mb-4">
           Pengajuan Kelas Privat
         </h3>
-        <table className="w-full border-collapse border border-gray-300">
+        {/* <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-200">
               <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
@@ -352,6 +448,68 @@ const KelolaKelas = () => {
               </tr>
             ))}
           </tbody>
+        </table> */}
+        <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2">Nama Siswa</th>
+              <th className="border border-gray-300 px-4 py-2">
+                Mata Pelajaran
+              </th>
+              <th className="border border-gray-300 px-4 py-2">Pengajar</th>
+
+              <th className="border border-gray-300 px-4 py-2">Jadwal Kelas</th>
+              <th className="border border-gray-300 px-4 py-2">
+                Catatan khusus
+              </th>
+              <th className="border border-gray-300 px-4 py-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pengajuanKelasPrivat.map((kelasPrivat, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasPrivat.nama_siswa}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasPrivat.nama_matpel}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasPrivat.nama_pengajar}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {new Date(kelasPrivat.waktu_kelas).toLocaleString()}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasPrivat.note}
+                </td>
+                <td className="p-3 flex gap-2">
+                  <button
+                    // onClick={() => handleAction(request.id, "Terima", "privat")}
+                    className={`px-4 py-2 rounded-lg font-semibold bg-[#00a9e0] text-white `}
+                    // ${
+                    //   actions[`privat-${request.id}`] === "Terima"
+                    //     ? "bg-[#00a9e0] text-white"
+                    //     : "bg-gray-200"
+                    // }
+                  >
+                    Terima
+                  </button>
+                  <button
+                    // onClick={() => handleAction(request.id, "Tolak", "privat")}
+                    className={`px-4 py-2 rounded-lg font-semibold bg-red-500 text-white `}
+                  >
+                    {/* ${
+                    actions[`privat-${request.id}`] === "Tolak"
+                      ? "bg-red-500 text-white"
+                      : "bg-gray-200"
+                  } */}
+                    Tolak
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 
@@ -381,7 +539,42 @@ const KelolaKelas = () => {
             </tr>
           </thead>
           <tbody>
-            {scheduleRequests.map((request) => (
+            {perubahanKelasReguler.map((kelasReguler, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasReguler.nama_siswa}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasReguler.nama_kelas_lama}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasReguler.nama_kelas_baru}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {kelasReguler.note}
+                </td>
+
+                <td className="p-3 flex gap-2">
+                  <button
+                    className={`px-4 py-2 rounded-lg font-semibold bg-[#00a9e0] text-white `}
+                  >
+                    Terima
+                  </button>
+                  <button
+                    className={`px-4 py-2 rounded-lg font-semibold bg-red-500 text-white `}
+                    // onClick={() => handleAction(request.id, "Tolak", "privat")}
+                    // className={`px-4 py-2 rounded-lg font-semibold ${
+                    //   actions[`privat-${request.id}`] === "Tolak"
+                    //     ? "bg-red-500 text-white"
+                    //     : "bg-gray-200"
+                    // }`}
+                  >
+                    Tolak
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {/* {scheduleRequests.map((request) => (
               <tr key={request.id}>
                 <td className="p-3">{request.namaSiswa}</td>
                 <td className="p-3">{request.kelasLama}</td>
@@ -414,7 +607,7 @@ const KelolaKelas = () => {
                   </button>
                 </td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
         </table>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getJumlahPengajar } from "../../services/AdminService";
+import { getJumlahPengajar, getPengajar } from "../../services/AdminService";
 
 const KelolaPengajar = () => {
   const navigate = useNavigate();
@@ -72,6 +72,9 @@ const KelolaPengajar = () => {
   );
 
   const [jumlahPengajar, setJumlahPengajar] = useState(0);
+  const [dataPengajar, setDataPengajar] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPengajar = async () => {
@@ -87,6 +90,29 @@ const KelolaPengajar = () => {
     };
     fetchPengajar();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const pengajar = await getPengajar(); // Panggil service
+      setDataPengajar(pengajar); // Simpan data ke state
+      setIsLoading(false); // Set loading selesai
+    } catch (err) {
+      setError(err); // Tangkap error
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(); // Fetch data saat komponen pertama kali di-load
+  }, []);
+
+  if (isLoading) {
+    return <p>Loading data...</p>; // Placeholder saat loading
+  }
+
+  if (error) {
+    return <p>Terjadi kesalahan: {error.message}</p>; // Tampilkan error jika ada
+  }
 
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
@@ -182,6 +208,30 @@ const KelolaPengajar = () => {
           />
         </div>
         <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2">Nama</th>
+              <th className="border border-gray-300 px-4 py-2">Spesialisasi</th>
+              <th className="border border-gray-300 px-4 py-2">Kontak</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataPengajar.map((pengajar, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {pengajar.nama}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {pengajar.spesialisasi}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {pengajar.kontak}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {/* <table className="table-auto w-full border-collapse border border-gray-300">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
@@ -234,7 +284,7 @@ const KelolaPengajar = () => {
               </tr>
             )}
           </tbody>
-        </table>
+        </table> */}
       </div>
     </div>
   );

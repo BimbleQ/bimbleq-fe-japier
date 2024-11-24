@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const EditKelas = () => {
   const [classInfo, setClassInfo] = useState({
@@ -32,7 +32,10 @@ const EditKelas = () => {
 
   const handleAddStudent = () => {
     if (selectedStudent) {
-      setStudents((prev) => [...prev, { id: students.length + 1, nama: selectedStudent.nama }]);
+      setStudents((prev) => [
+        ...prev,
+        { id: students.length + 1, nama: selectedStudent.nama },
+      ]);
       alert(`${selectedStudent.nama} berhasil ditambahkan.`);
       setSelectedStudent(null);
       setSearchTerm("");
@@ -52,18 +55,39 @@ const EditKelas = () => {
     { id: 5, nama: "Siswa E" },
     { id: 6, nama: "Siswa F" },
     { id: 7, nama: "Siswa G" },
-  ].filter((student) => student.nama.toLowerCase().includes(searchTerm.toLowerCase()));
+  ].filter((student) =>
+    student.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const [dataKelas, setDataKelas] = useState([]);
+  const fetchDaftarKelas = async () => {
+    try {
+      const kelas = await getKelas(); // Panggil service
+      setDataKelas(kelas); // Simpan data ke state
+      setIsLoading(false); // Selesai loading
+    } catch (err) {
+      setError(err); // Tangkap error
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchDaftarKelas();
+    // Fetch data saat komponen pertama kali di-load
+  }, []);
 
   return (
     <div className="p-6 bg-gray-100 h-full flex flex-col gap-6">
       {/* Breadcrumb */}
       <h2 className="text-xl font-semibold text-[#212121]">
-        Dashboard / Kelola Kelas / <span className="text-[#00a9e0]">Edit Kelas</span>
+        Dashboard / Kelola Kelas /{" "}
+        <span className="text-[#00a9e0]">Edit Kelas</span>
       </h2>
 
       {/* Informasi Kelas */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h3 className="text-[#00a9e0] font-bold text-lg mb-4">Informasi Kelas</h3>
+        <h3 className="text-[#00a9e0] font-bold text-lg mb-4">
+          Informasi Kelas
+        </h3>
         <div className="flex flex-col gap-4">
           <input
             type="text"
@@ -109,12 +133,18 @@ const EditKelas = () => {
       <div className="grid grid-cols-2 gap-6">
         {/* Daftar Siswa */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">Daftar Siswa</h3>
+          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">
+            Daftar Siswa
+          </h3>
           <table className="table-auto w-full border-collapse border border-gray-300">
             <thead className="bg-gray-200">
               <tr>
-                <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Nama Siswa</th>
-                <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">Aksi</th>
+                <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
+                  Nama Siswa
+                </th>
+                <th className="p-3 text-left text-gray-600 font-semibold border border-gray-300">
+                  Aksi
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -143,7 +173,9 @@ const EditKelas = () => {
 
         {/* Tambahkan Siswa */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">Tambahkan Siswa</h3>
+          <h3 className="text-[#00a9e0] font-bold text-lg mb-4">
+            Tambahkan Siswa
+          </h3>
           <input
             type="text"
             value={searchTerm}

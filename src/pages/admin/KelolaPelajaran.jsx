@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   getMataPelajaran,
   getJumlahPelajaran,
+  postSimpanPelajaran,
+  removePelajaran,
 } from "../../services/AdminService";
 
 const KelolaPelajaran = () => {
